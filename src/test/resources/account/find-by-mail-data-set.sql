@@ -1,0 +1,2 @@
+INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail, password, user_roles, enable, locale) VALUES ('Valerio', 'Vaudi', '1970-01-01', 'valerio.vaudi@test.com', 'secret', 'ROLE_USER,ROLE_ADMIN', 1 ,'en')
+INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail, password, user_roles, phone, enable, locale) VALUES ('Valerio', 'Vaudi', '1970-01-01', 'valerio.vaudi-with-phone@test.com', 'secret', 'ROLE_USER,ROLE_ADMIN', '+39 333 2255112', 1 ,'en')
