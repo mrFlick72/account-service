@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Slf4j
-public class AccountUserDetailsService implements UserDetailsService {
+public class AccountUserDetailsService {
 
     private final AccountRepository accountRepository;
 
@@ -17,13 +17,16 @@ public class AccountUserDetailsService implements UserDetailsService {
         this.accountRepository = accountRepository;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    public SecurityAccountDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         Account account = accountRepository.findByMail(userName);
         log.info("account: " + account.toString());
-        return User.withUsername(account.getMail())
-                .password(account.getPassword())
-                .accountExpired(!account.getEnable())
-                .authorities("USER").build();
+
+        return new SecurityAccountDetails(account.getMail(),
+                account.getPassword(),
+                true,
+                true,
+                true,
+                account.getEnable(),
+                account.getUserRoles());
     }
 }

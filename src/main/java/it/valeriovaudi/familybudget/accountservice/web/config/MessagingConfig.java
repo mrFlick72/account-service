@@ -1,7 +1,7 @@
 package it.valeriovaudi.familybudget.accountservice.web.config;
 
 import it.valeriovaudi.familybudget.accountservice.web.security.AccountUserDetailsService;
-import it.valeriovaudi.familybudget.accountservice.web.security.UserDetailsProcessorChannelHandlrer;
+import it.valeriovaudi.familybudget.accountservice.web.security.UserDetailsProcessorChannelHandler;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class MessagingConfig {
     }
 
     @Bean
-    public UserDetailsProcessorChannelHandlrer userDetailsProcessorChannelHandlrer(AccountUserDetailsService accountUserDetailsService){
-        return new UserDetailsProcessorChannelHandlrer(accountUserDetailsService);
+    public UserDetailsProcessorChannelHandler userDetailsProcessorChannelHandlrer(AccountUserDetailsService accountUserDetailsService){
+        return new UserDetailsProcessorChannelHandler(accountUserDetailsService);
     }
 }
