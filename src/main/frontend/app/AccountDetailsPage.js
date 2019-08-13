@@ -1,12 +1,15 @@
 import React from 'react'
 import Menu from "./component/menu/Menu";
-import {Link} from "react-router-dom";
 import {AccountRepository} from "./domain/repository/AccountRepository";
 import DatePicker from "react-datetime"
 import "react-datetime/css/react-datetime.css"
 
-class AccountDetailsPage extends React.Component {
+const links = {
+    logOut: "/logout",
+    home: "/family-budget/index"
+};
 
+class AccountDetailsPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -49,11 +52,8 @@ class AccountDetailsPage extends React.Component {
     }
 
     componentDidMount() {
-        this.loadCommonData();
-
         this.accountRepository.getAccountData()
             .then((data) => {
-
                 this.firstNameInputRef.current.value = data.firstName;
                 this.lastNameInputRef.current.value = data.lastName;
                 this.phoneInputRef.current.value = data.phone;
@@ -67,7 +67,7 @@ class AccountDetailsPage extends React.Component {
 
         return (
             <div>
-                <Menu messages={this.menuMessages} links={this.props.links}></Menu>
+                <Menu messages={this.menuMessages} links={links}></Menu>
 
                 <div className="container">
                     <div className="content">
@@ -105,9 +105,7 @@ class AccountDetailsPage extends React.Component {
                         </div>
 
                         <div className="form-group">
-                            <Link className="btn btn-secondary" to="/">
-                                <i className="fas fa-angle-left fa-lg"></i> Back
-                            </Link>
+
                             <button type="submit" className="btn btn-success" onClick={this.save}>
                                 <i className="fas fa-check fa-lg"></i> Save changes
                             </button>

@@ -1,7 +1,7 @@
 export class AccountRepository {
 
     getAccountData(){
-        return fetch("/site/account-service/account",{
+        return fetch("/account-service/account",{
             method:"GET",
             credentials: 'same-origin'
         }).then(data => data.json());
@@ -9,7 +9,7 @@ export class AccountRepository {
 
 
     save(account){
-        return fetch("/site/account-service/account",{
+        return fetch("/account-service/account",{
             method:"PUT",
             body: JSON.stringify(account),
             credentials: 'same-origin'
