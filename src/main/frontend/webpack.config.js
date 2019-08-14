@@ -14,8 +14,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             chunks: ['account'],
-            filename: "account/index.html",
-            template: path.resolve(__dirname, "../resources/static/account/index.html")
+            filename: "site/index.html",
+            template: path.resolve(__dirname, "../resources/static/site/index.html")
         })
     ],
     module: {

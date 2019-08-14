@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/account-service/account")
+@RequestMapping("/site/user-info")
 public class AccountSiteEndPoint {
 
     private final AccountRepository accountRepository;
