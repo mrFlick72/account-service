@@ -38,4 +38,14 @@ public class AccountAdapter {
                 accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
     }
 
+    public Account siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
+
+        Account account = accountRepository.findByMail(accountRepresentation.getMail());
+        return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
+                Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
+                Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
+                        .orElseGet(account::getPassword),
+                account.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
+    }
+
 }

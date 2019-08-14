@@ -7,8 +7,8 @@ spring:
         enabled: true
       fail-fast: true
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG

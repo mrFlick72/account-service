@@ -34,7 +34,7 @@ public class AccountSiteEndPoint {
     public ResponseEntity save(@AuthenticationPrincipal Principal principal,
                                @RequestBody AccountRepresentation accountRepresentation) {
         accountRepresentation.setMail(principal.getName());
-        Account account = accountAdapter.representationModelToDomainModel(accountRepresentation);
+        Account account = accountAdapter.siteRepresentationModelToDomainModel(accountRepresentation);
         accountRepository.update(account);
         return ResponseEntity.noContent().build();
     }
