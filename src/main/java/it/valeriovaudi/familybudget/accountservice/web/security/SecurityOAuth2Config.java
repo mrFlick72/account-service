@@ -1,22 +1,28 @@
 package it.valeriovaudi.familybudget.accountservice.web.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 
 @EnableWebSecurity
-public class SecurityOAuth2ResourceServerConfig extends WebSecurityConfigurerAdapter {
+public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
+
+    @Value("${spring.security.oauth2.client.registration.client.client-id}")
+    private String familyBudgetClientRegistrationId;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .csrf().disable()
+        http.csrf().disable()
                 .authorizeRequests()
                 .and().authorizeRequests().mvcMatchers("/actuator/**").permitAll().and()
                 .authorizeRequests().anyRequest().authenticated().and()
-                .oauth2ResourceServer().jwt();
+                .oauth2ResourceServer().jwt()
+                .and()
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .customUserType(VAuthenticatorOAuth2User.class, familyBudgetClientRegistrationId);
     }
 
 }
