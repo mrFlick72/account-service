@@ -267,7 +267,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.0</version>
                 <configuration>
-                    <imageName>mrflick72/${project.build.finalName}:lastest</imageName>          <imageTags>
+                    <imageName>mrflick72/${project.build.finalName}:lastest</imageName>
+                    <imageTags>
                         <imageTag>1.0.0</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
