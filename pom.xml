@@ -5,7 +5,7 @@
 
     <groupId>it.valeriovaudi.familybudget</groupId>
     <artifactId>account-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>account-service</name>
@@ -265,9 +265,12 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.2.0</version>
                 <configuration>
-                    <imageName>family-budget/${project.build.finalName}:lastest</imageName>
+                    <imageName>mrflick72/${project.build.finalName}:lastest</imageName>          <imageTags>
+                        <imageTag>1.0.0</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <resources>
                         <resource>
@@ -299,13 +302,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
 
 </project>
