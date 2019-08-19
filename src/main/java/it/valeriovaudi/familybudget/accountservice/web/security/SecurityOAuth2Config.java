@@ -15,12 +15,14 @@ public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .and().authorizeRequests().mvcMatchers("/actuator/**").permitAll().and()
-                .authorizeRequests().anyRequest().authenticated().and()
+                .and()
+                .authorizeRequests().mvcMatchers("/actuator/**").permitAll()
+                .and()
+                .authorizeRequests().anyRequest().authenticated()
+                .and()
                 .oauth2ResourceServer().jwt()
-                .and()
-                .and()
-                .oauth2Login()
+                .and().and()
+                .oauth2Login().defaultSuccessUrl("/site/index.html")
                 .userInfoEndpoint()
                 .customUserType(VAuthenticatorOAuth2User.class, familyBudgetClientRegistrationId);
     }
