@@ -5,7 +5,7 @@ import DatePicker from "react-datetime"
 import "react-datetime/css/react-datetime.css"
 
 const links = {
-    logOut: "/account/logout",
+    logOut: "/account/oidc_logout.html",
     home: "/family-budget/index"
 };
 

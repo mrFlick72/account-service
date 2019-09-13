@@ -12,7 +12,7 @@ export default ({links, messages, children}) => (
 
                 <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
                 </ul>
-                <form action={links.logOut} method="post">
+                <form action={links.logOut} method="GET">
                     <button type="submit" className="btn btn-secondary"> {messages.logOutLabel}
                         <i className="fas fa-sign-out-alt fs-lg"></i></button>
                 </form>

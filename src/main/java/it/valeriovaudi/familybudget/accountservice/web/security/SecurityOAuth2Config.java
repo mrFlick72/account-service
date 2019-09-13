@@ -16,7 +16,7 @@ public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .and()
-                .authorizeRequests().mvcMatchers("/actuator/**").permitAll()
+                .authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
                 .authorizeRequests().anyRequest().authenticated()
                 .and()
