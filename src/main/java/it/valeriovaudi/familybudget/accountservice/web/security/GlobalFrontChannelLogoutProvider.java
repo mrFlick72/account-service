@@ -23,6 +23,6 @@ public class GlobalFrontChannelLogoutProvider {
 
     private String baseLogoutUrlFromOP() {
         HashMap<String, String> forObject = restTemplate.getForObject(oidConnectDiscoveryEndPoint, HashMap.class);
-        return forObject.get("end_session_endpoint");
+        return forObject.get("frontchannel_logout_uri");
     }
 }
