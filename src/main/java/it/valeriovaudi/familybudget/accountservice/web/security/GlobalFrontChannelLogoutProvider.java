@@ -1,6 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.web.security;
 
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
 import java.util.HashMap;
 
@@ -8,19 +8,21 @@ public class GlobalFrontChannelLogoutProvider {
 
     private final String postLogoutRedirectUri;
     private final String oidConnectDiscoveryEndPoint;
+    private final RestOperations restTemplate;
 
-    public GlobalFrontChannelLogoutProvider(String postLogoutRedirectUri, String oidConnectDiscoveryEndPoint) {
+    public GlobalFrontChannelLogoutProvider(String postLogoutRedirectUri, String oidConnectDiscoveryEndPoint, RestOperations restTemplate) {
         this.postLogoutRedirectUri = postLogoutRedirectUri;
         this.oidConnectDiscoveryEndPoint = oidConnectDiscoveryEndPoint;
+        this.restTemplate = restTemplate;
     }
 
     public String getLogoutUrl() {
-        var restTemplate = new RestTemplate();
-        HashMap<String, String> forObject =
-                restTemplate.getForObject(oidConnectDiscoveryEndPoint, HashMap.class);
-
-        String logoutUrl = forObject.get("end_session_endpoint");
-
+        String logoutUrl = baseLogoutUrlFromOP();
         return logoutUrl + "?post_logout_redirect_uri=" + postLogoutRedirectUri;
+    }
+
+    private String baseLogoutUrlFromOP() {
+        HashMap<String, String> forObject = restTemplate.getForObject(oidConnectDiscoveryEndPoint, HashMap.class);
+        return forObject.get("end_session_endpoint");
     }
 }

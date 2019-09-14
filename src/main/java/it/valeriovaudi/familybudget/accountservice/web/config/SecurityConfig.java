@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class SecurityConfig {
@@ -25,6 +26,8 @@ public class SecurityConfig {
     @Bean
     public GlobalFrontChannelLogoutProvider globalFrontChannelLogoutProvider(@Value("${postLogoutRedirectUri}") String postLogoutRedirectUri,
                                                                              @Value("${auth.oidcIss}") String oidConnectDiscoveryEndPoint) {
-        return new GlobalFrontChannelLogoutProvider(postLogoutRedirectUri, oidConnectDiscoveryEndPoint + "/.well-known/openid-configuration");
+        return new GlobalFrontChannelLogoutProvider(postLogoutRedirectUri,
+                oidConnectDiscoveryEndPoint + "/.well-known/openid-configuration",
+                new RestTemplate());
     }
 }
