@@ -35,7 +35,6 @@ class AccountDetailsPage extends React.Component {
     initMessages() {
         this.menuMessages = {
             title: "Only One Portal - Account",
-            userProfileLabel: "AccountDetailsPage.menuMessages.userProfileLabel",
             logOutLabel: "Log Out"
         };
     }
