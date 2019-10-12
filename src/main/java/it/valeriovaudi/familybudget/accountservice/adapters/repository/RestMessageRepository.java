@@ -1,5 +1,6 @@
-package it.valeriovaudi.familybudget.accountservice.domain.repository;
+package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 
+import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.client.RestTemplate;
 

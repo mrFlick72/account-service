@@ -1,8 +1,8 @@
 package it.valeriovaudi.familybudget.accountservice.web.config;
 
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.JdbcAccountRepository;
+import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
-import it.valeriovaudi.familybudget.accountservice.domain.repository.RestMessageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
