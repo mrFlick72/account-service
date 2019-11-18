@@ -5,7 +5,7 @@
 
     <groupId>it.valeriovaudi.familybudget</groupId>
     <artifactId>account-service</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>account-service</name>
@@ -260,7 +260,7 @@
                 <configuration>
                     <imageName>mrflick72/${project.build.finalName}:lastest</imageName>
                     <imageTags>
-                        <imageTag>1.0.0</imageTag>
+                        <imageTag>${pom.version}</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>
