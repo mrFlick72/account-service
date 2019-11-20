@@ -10,7 +10,7 @@ jobs:
           sudo apt-get install libpng-dev -y --no-install-recommends |
           sudo apt-get install pkg-config |
           sudo apt-get install autoconf libtool pkg-config nasm build-essential |
-          sudo apt-get update && apt-get install -y gcc make libpng-dev
+          sudo apt-get update && sudo apt-get install -y gcc make libpng-dev
       - setup_remote_docker
       - run: mvn clean install
       - run: docker login -u $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
