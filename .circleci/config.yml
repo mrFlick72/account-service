@@ -3,14 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11-jdk-stretch
+      - image: circleci/ruby:2.4.2-jessie-node
     steps:
       - checkout
-      - run: |
-          sudo apt-get update |
-          sudo apt-get install libpng-dev -y --no-install-recommends |
-          sudo apt-get install pkg-config |
-          sudo apt-get install autoconf libtool pkg-config nasm build-essential |
-          sudo apt-get update && sudo apt-get install -y gcc make libpng-dev
       - setup_remote_docker
       - run: mvn clean install
       - run: docker login -u $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
