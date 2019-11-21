@@ -5,7 +5,7 @@ jobs:
       - image: circleci/openjdk:11-jdk-stretch
     steps:
       - checkout
-      - run:  /bin/sh  apt-get update
+      - run: sudo apt-get update
 
       - setup_remote_docker
       - run: mvn clean install
