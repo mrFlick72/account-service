@@ -5,12 +5,11 @@ jobs:
       - image: circleci/openjdk:11-jdk-stretch
     steps:
       - checkout
-      - run: |
-          /bin/sh -c  apt-get update |
-          /bin/sh -c  apt-get install libpng-dev -y --no-install-recommends |
-          /bin/sh -c  apt-get install pkg-config |
-          /bin/sh -c  apt-get install autoconf libtool pkg-config nasm build-essential |
-          /bin/sh -c  apt-get update && /bin/sh -c  apt-get install -y gcc make libpng-dev
+      - run:  /bin/sh -c  apt-get update
+      - run:  /bin/sh -c  apt-get install libpng-dev -y --no-install-recommends
+      - run:   /bin/sh -c  apt-get install pkg-config
+      - run:   /bin/sh -c  apt-get install autoconf libtool pkg-config nasm build-essential
+      - run:  /bin/sh -c  apt-get update && /bin/sh -c  apt-get install -y gcc make libpng-dev
       - setup_remote_docker
       - run: mvn clean install
       - run: docker login -u $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
