@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.security;
+package it.valeriovaudi.vauthenticator.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:12
 
 ADD account-service.jar /usr/local/account-service/
 

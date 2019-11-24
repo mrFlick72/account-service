@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.security;
+package it.valeriovaudi.vauthenticator.security;
 
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.client.RestOperations;

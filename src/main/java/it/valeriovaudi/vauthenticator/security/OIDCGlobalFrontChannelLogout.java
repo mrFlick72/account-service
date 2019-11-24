@@ -1,6 +1,5 @@
-package it.valeriovaudi.familybudget.accountservice.web.endpoint;
+package it.valeriovaudi.vauthenticator.security;
 
-import it.valeriovaudi.familybudget.accountservice.web.security.GlobalFrontChannelLogoutProvider;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
