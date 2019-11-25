@@ -1,7 +1,7 @@
 package it.valeriovaudi.familybudget.accountservice.web.security;
 
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorOAuth2User;
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorOidcUserService;
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOAuth2User;
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOidcUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,6 +32,7 @@ public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
                 .oidcUserService(vAuthenticatorOidcUserService());
     }
 
+    //todo
     public VAuthenticatorOidcUserService vAuthenticatorOidcUserService() {
         return new VAuthenticatorOidcUserService(
                 Map.of(familyBudgetClientRegistrationId, VAuthenticatorOAuth2User.class),
