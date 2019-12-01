@@ -32,7 +32,6 @@ public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
                 .oidcUserService(vAuthenticatorOidcUserService());
     }
 
-    //todo
     public VAuthenticatorOidcUserService vAuthenticatorOidcUserService() {
         return new VAuthenticatorOidcUserService(
                 Map.of(familyBudgetClientRegistrationId, VAuthenticatorOAuth2User.class),
