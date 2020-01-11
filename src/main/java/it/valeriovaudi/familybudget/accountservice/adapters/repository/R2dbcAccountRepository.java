@@ -1,28 +1,34 @@
 package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
-import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
-import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.Locale;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
-
 @Transactional
-public class JdbcAccountRepository implements AccountRepository {
+public class R2dbcAccountRepository implements AccountRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final DatabaseClient client;
 
-    public JdbcAccountRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public R2dbcAccountRepository(DatabaseClient client) {
+        this.client = client;
     }
 
+    @Override
+    public Account findByMail(String mail) {
+        return null;
+    }
+
+    @Override
+    public void save(Account account) {
+
+    }
+
+    @Override
+    public void update(Account account) {
+
+    }
+    /*
     @Override
     public Account findByMail(String mail) {
         return jdbcTemplate.queryForObject("SELECT * FROM ACCOUNT WHERE mail=?", (resultSet, rowNum) ->
@@ -49,6 +55,6 @@ public class JdbcAccountRepository implements AccountRepository {
         jdbcTemplate.update("UPDATE ACCOUNT SET first_Name=?, last_Name=?, birth_Date=?, password=?, user_roles=?, phone=?, enable=?, locale=? WHERE mail=?",
                 account.getFirstName(), account.getLastName(), account.getBirthDate().getLocalDate(), account.getPassword(), collectionToCommaDelimitedString(account.getUserRoles()), account.getPhone().formattedPhone(), account.getEnable(), account.getLocale().toLanguageTag(), account.getMail());
 
-    }
+    }*/
 
 }
