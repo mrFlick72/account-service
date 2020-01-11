@@ -2,6 +2,7 @@ package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.ConnectionFactoryOptions;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
@@ -15,6 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
 import java.util.Locale;
 
+import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,8 +38,15 @@ public class R2dbcAccountRepositoryTest {
         var serviceHost = postgres.getServiceHost("postgres_1", 5432);
         var servicePort = postgres.getServicePort("postgres_1", 5432);
 
-        String url = String.format("r2dbcs:postgess://root:root%s:%s/account_service", serviceHost, servicePort);
-        ConnectionFactory connectionFactory = ConnectionFactories.get(url);
+        ConnectionFactory connectionFactory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
+                .option(DRIVER, "postgresql")
+                .option(HOST, serviceHost)
+                .option(PORT, servicePort)  // optional, defaults to 5432
+                .option(USER, "root")
+                .option(PASSWORD, "root")
+                .option(DATABASE, "account_service")  // optional
+                .build());
+
         DatabaseClient databaseClient = DatabaseClient.create(connectionFactory);
         accountRepository  = new R2dbcAccountRepository(databaseClient);
     }
