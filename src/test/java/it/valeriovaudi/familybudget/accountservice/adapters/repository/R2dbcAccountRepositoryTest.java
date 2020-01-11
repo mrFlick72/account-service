@@ -8,18 +8,18 @@ import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import reactor.test.StepVerifier;
 
 import java.io.File;
 import java.util.Locale;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @Testcontainers
@@ -63,10 +63,11 @@ public class R2dbcAccountRepositoryTest {
                 Boolean.TRUE,
                 Locale.ENGLISH);
 
-        accountRepository.save(expected);
-        Account actual= accountRepository.findByMail("valerio.vaudi@test.com");
+        Publisher<Void> save = accountRepository.save(expected);
 
-        assertThat(actual, equalTo(expected));
+        StepVerifier.create(save)
+                .expectNext()
+                .verifyComplete();
     }
 
 /*

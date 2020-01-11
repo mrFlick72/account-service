@@ -2,16 +2,20 @@ package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
+import org.reactivestreams.Publisher;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
+
+import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
 
 @Transactional
 public class R2dbcAccountRepository implements AccountRepository {
 
-    private final DatabaseClient client;
+    private final DatabaseClient databaseClient;
 
-    public R2dbcAccountRepository(DatabaseClient client) {
-        this.client = client;
+    public R2dbcAccountRepository(DatabaseClient databaseClient) {
+        this.databaseClient = databaseClient;
     }
 
     @Override
@@ -20,7 +24,21 @@ public class R2dbcAccountRepository implements AccountRepository {
     }
 
     @Override
-    public void save(Account account) {
+    public Publisher<Void> save(Account account) {
+        return  databaseClient.execute("INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail, password, user_roles, phone, enable, locale) VALUES (:first_Name, :last_Name, :birth_Date, :mail, :password, :user_roles, :phone, :enable, :locale)")
+                .bind("first_Name", account.getFirstName())
+                .bind("last_Name", account.getLastName())
+                .bind("birth_Date",  account.getBirthDate().getLocalDate())
+                .bind("mail", account.getMail())
+                .bind("password", account.getPassword())
+                .bind("user_roles", collectionToCommaDelimitedString(account.getUserRoles()))
+                .bind("phone", account.getPhone().formattedPhone())
+                .bind("enable", account.getEnable())
+                .bind("locale", account.getLocale().toLanguageTag())
+
+                .fetch()
+                .rowsUpdated()
+                .flatMap(result -> Mono.empty());
 
     }
 
