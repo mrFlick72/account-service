@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @EnableWebFluxSecurity
@@ -27,13 +28,18 @@ public class SecurityOAuth2Config {
                 .oauth2ResourceServer().jwt()
                 .and().and()
                 .oauth2Login()
-                .and().build();
+                .and()
+//                .authenticationConverter(new OidcReactiveOAuth2UserService())
+                .build();
 //                .defaultSuccessUrl("/site/index.html")
 //                .userInfoEndpoint()
 //                .oidcUserService(vAuthenticatorOidcUserService());
     }
 
-    
+    @Bean
+    public OidcReactiveOAuth2UserService oidcReactiveOAuth2UserService(){
+        return new OidcReactiveOAuth2UserService();
+    }
 
 /*    public VAuthenticatorOidcUserService vAuthenticatorOidcUserService() {
         return new VAuthenticatorOidcUserService(

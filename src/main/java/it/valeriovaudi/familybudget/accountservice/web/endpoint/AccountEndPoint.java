@@ -4,6 +4,7 @@ import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepo
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -26,28 +27,27 @@ public class AccountEndPoint {
     }
 
     @Bean
-    public RouterFunction accountEndPointRoute() {
+    public RouterFunction accountEndPointRoute(ServerProperties serverProperties) {
+        String uri = serverProperties.getServlet().getContextPath() + "/{mail}/mail";
         return RouterFunctions.route()
 
-                .GET("/{mail}/mail",
-                        serverRequest ->
-                                Mono.from(accountRepository.findByMail(serverRequest.pathVariable("mail")))
-                                        .map(accountAdapter::domainToRepresentationModel)
-                                        .flatMap(accountRepresentation ->
-                                                ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
+                .GET(uri, serverRequest ->
+                        Mono.from(accountRepository.findByMail(serverRequest.pathVariable("mail")))
+                                .map(accountAdapter::domainToRepresentationModel)
+                                .flatMap(accountRepresentation ->
+                                        ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
 
                 )
 
-                .PUT("/{mail}/mail",
-                        serverRequest ->
-                                serverRequest.bodyToMono(AccountRepresentation.class)
-                                        .map(accountRepresentation -> {
-                                            accountRepresentation.setMail(serverRequest.pathVariable("mail"));
-                                            return accountRepresentation;
-                                        })
-                                        .map(accountAdapter::representationModelToDomainModel)
-                                        .flatMap(account -> Mono.from(accountRepository.update(account)))
-                                        .flatMap(ack -> ServerResponse.noContent().build())
+                .PUT(uri, serverRequest ->
+                        serverRequest.bodyToMono(AccountRepresentation.class)
+                                .map(accountRepresentation -> {
+                                    accountRepresentation.setMail(serverRequest.pathVariable("mail"));
+                                    return accountRepresentation;
+                                })
+                                .map(accountAdapter::representationModelToDomainModel)
+                                .flatMap(account -> Mono.from(accountRepository.update(account)))
+                                .flatMap(ack -> ServerResponse.noContent().build())
 
                 )
                 .build();

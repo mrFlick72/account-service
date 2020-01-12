@@ -3,6 +3,7 @@ package it.valeriovaudi.familybudget.accountservice.web.endpoint;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorUserNameResolver;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -29,16 +30,15 @@ public class AccountSiteEndPoint {
     }
 
     @Bean
-    public RouterFunction accountSiteEndPointRoute() {
+    public RouterFunction accountSiteEndPointRoute(ServerProperties serverProperties) {
         return RouterFunctions.route()
-                .GET(ENDPOINT_PREFIX,
+                .GET(serverProperties.getServlet().getContextPath() + ENDPOINT_PREFIX,
                         serverRequest -> serverRequest.principal()
-                                        .map(vAuthenticatorUserNameResolver::getUserNameFor)
-                                        .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
-                                        .map(accountAdapter::domainToRepresentationModel)
-                                        .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
+                                .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
+                                .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
+                                .map(accountAdapter::domainToRepresentationModel)
+                                .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
                 )
-
                 .build();
     }
 
