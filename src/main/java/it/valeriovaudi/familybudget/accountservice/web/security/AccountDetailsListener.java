@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @Slf4j
 public class AccountDetailsListener {
@@ -16,12 +19,15 @@ public class AccountDetailsListener {
         this.accountRepository = accountRepository;
     }
 
+    //todo move to rective
     @RabbitListener(queues = "getAccountInboundQueue")
     public String getUserDetails(String mail) {
         log.info("mail: " + mail);
 
         try {
-            return objectMapper.writeValueAsString(accountRepository.findByMail(mail));
+            var account = Mono.from(accountRepository.findByMail(mail)).blockOptional(Duration.ofSeconds(10));
+            System.out.println(account);
+            return objectMapper.writeValueAsString(account);
         } catch (Exception e) {
             log.error("user didn't found");
         }

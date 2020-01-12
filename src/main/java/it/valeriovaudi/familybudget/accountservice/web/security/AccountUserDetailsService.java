@@ -14,7 +14,6 @@ public class AccountUserDetailsService {
         this.accountRepository = accountRepository;
     }
 
-    //todo move to reactive
     public Mono<SecurityAccountDetails> loadUserByUsername(String userName) throws UsernameNotFoundException {
         return Mono.from(accountRepository.findByMail(userName))
                 .log()

@@ -5,15 +5,12 @@ import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorUserNameResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-@RestController
 @Configuration
 public class AccountSiteEndPoint {
 
@@ -36,7 +33,7 @@ public class AccountSiteEndPoint {
         return RouterFunctions.route()
                 .GET(ENDPOINT_PREFIX,
                         serverRequest -> serverRequest.principal()
-                                        .map(this::getUserNameFor)
+                                        .map(vAuthenticatorUserNameResolver::getUserNameFor)
                                         .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
                                         .map(accountAdapter::domainToRepresentationModel)
                                         .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
@@ -70,8 +67,4 @@ public class AccountSiteEndPoint {
         return ResponseEntity.noContent().build();
     }*/
 
-    private String getUserNameFor(Object principal) {
-        OidcUser oidcUser = (OidcUser) principal;
-        return (String) oidcUser.getClaims().getOrDefault("email", "");
-    }
 }
