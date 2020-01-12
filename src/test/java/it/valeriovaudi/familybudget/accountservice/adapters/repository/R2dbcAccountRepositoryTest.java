@@ -86,24 +86,24 @@ public class R2dbcAccountRepositoryTest {
                 .expectNext(expected)
                 .verifyComplete();
     }
-/*
+
     @Test
-    @Sql("classpath:account/find-by-mail-data-set.sql")
     public void findByMailWithPhone() {
-        Account actual = jdbcBudgetExpenseRepository.findByMail("valerio.vaudi-with-phone@test.com");
         Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi-with-phone@test.com", "secret", asList("ROLE_USER", "ROLE_ADMIN"), Phone.phoneFor("+39 333 2255112"), Boolean.TRUE, Locale.ENGLISH);
-        assertThat(actual, is(expected));
+
+        var accountPublisher = accountRepository.findByMail("valerio.vaudi-with-phone@test.com");
+        StepVerifier.create(accountPublisher)
+                .expectNext(expected)
+                .verifyComplete();
     }
 
-
-
     @Test
-    @Sql("classpath:account/find-by-mail-data-set.sql")
     public void updateAccount() {
         Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com", "secret", asList("ROLE_USER", "ROLE_ADMIN"), Phone.phoneFor("+39 333 2255112"), Boolean.FALSE, Locale.ITALIAN);
-        jdbcBudgetExpenseRepository.update(expected);
+        var accountPublisher = accountRepository.update(expected);
 
-        Account actual = jdbcBudgetExpenseRepository.findByMail("valerio.vaudi@test.com");
-        assertThat(actual, is(expected));
-    }*/
+        StepVerifier.create(accountPublisher)
+                .expectNext()
+                .verifyComplete();
+    }
 }

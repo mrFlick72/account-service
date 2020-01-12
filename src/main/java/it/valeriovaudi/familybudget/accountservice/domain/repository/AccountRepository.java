@@ -10,5 +10,5 @@ public interface AccountRepository {
 
     Publisher<Void> save(Account account);
 
-    void update(Account account);
+    Publisher<Void>  update(Account account);
 }
