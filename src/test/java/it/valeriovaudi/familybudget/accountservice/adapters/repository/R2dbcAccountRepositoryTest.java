@@ -8,7 +8,6 @@ import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.reactivestreams.Publisher;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -29,7 +28,7 @@ public class R2dbcAccountRepositoryTest {
 
 
     @Container
-    public static DockerComposeContainer postgres = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"))
+    private static final DockerComposeContainer postgres = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"))
             .withExposedService("postgres_1", 5432);
 
 
@@ -48,37 +47,46 @@ public class R2dbcAccountRepositoryTest {
                 .build());
 
         DatabaseClient databaseClient = DatabaseClient.create(connectionFactory);
-        accountRepository  = new R2dbcAccountRepository(databaseClient);
+        accountRepository = new R2dbcAccountRepository(databaseClient);
     }
 
     @Test
     public void saveAccount() {
-        Account expected  = new Account("Valerio",
+        var expected = new Account("Valerio",
                 "Vaudi",
                 Date.dateFor("01/01/1970"),
-                "valerio.vaudi@test.com",
+                "valerio.vaudi123@test.com",
                 "secret",
                 asList("ROLE_USER", "ROLE_ADMIN"),
                 Phone.phoneFor("+39 333 2255112"),
                 Boolean.TRUE,
                 Locale.ENGLISH);
 
-        Publisher<Void> save = accountRepository.save(expected);
+        var save = accountRepository.save(expected);
 
         StepVerifier.create(save)
                 .expectNext()
                 .verifyComplete();
     }
 
-/*
-    @Test
-    @Sql("classpath:account/find-by-mail-data-set.sql")
-    public void findByMail() {
-        Account actual = accountRepository.findByMail("valerio.vaudi@test.com");
-        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com", "secret", asList("ROLE_USER", "ROLE_ADMIN"), Phone.nullValue(), Boolean.TRUE, Locale.ENGLISH.ENGLISH);
-        assertThat(actual, is(expected));
-    }
 
+    @Test
+    public void findByMail() {
+        var expected = new Account("Valerio",
+                "Vaudi", Date.dateFor("01/01/1970"),
+                "valerio.vaudi@test.com",
+                "secret",
+                asList("ROLE_USER", "ROLE_ADMIN"),
+                Phone.nullValue(),
+                Boolean.TRUE,
+                Locale.ENGLISH);
+
+        var accountPublisher = accountRepository.findByMail("valerio.vaudi@test.com");
+        StepVerifier.create(accountPublisher)
+                .expectNext(expected)
+                .verifyComplete();
+    }
+/*
     @Test
     @Sql("classpath:account/find-by-mail-data-set.sql")
     public void findByMailWithPhone() {

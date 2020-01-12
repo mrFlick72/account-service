@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/site/user-info")
@@ -26,9 +27,10 @@ public class AccountSiteEndPoint {
         this.accountAdapter = accountAdapter;
     }
 
+    //todo move to reactive
     @GetMapping
     public ResponseEntity account(@AuthenticationPrincipal Authentication principal) {
-        Account account = accountRepository.findByMail(vAuthenticatorUserNameResolver.getUserNameFor(principal));
+        Account account = Mono.from(accountRepository.findByMail(vAuthenticatorUserNameResolver.getUserNameFor(principal))).block();
         AccountRepresentation accountRepresentation = accountAdapter.domainToRepresentationModel(account);
         return ResponseEntity.ok(accountRepresentation);
     }

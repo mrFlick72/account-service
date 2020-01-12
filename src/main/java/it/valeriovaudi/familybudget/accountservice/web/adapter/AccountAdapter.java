@@ -6,6 +6,7 @@ import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import reactor.core.publisher.Mono;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -30,17 +31,22 @@ public class AccountAdapter {
                 account.getPhone().formattedPhone());
     }
 
+    //todo move to reactive
     public Account representationModelToDomainModel(AccountRepresentation accountRepresentation) {
         return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
                 Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
                 Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
-                        .orElseGet(() -> accountRepository.findByMail(accountRepresentation.getMail()).getPassword()),
+                        .orElseGet(() ->{
+                            var account = Mono.from(accountRepository.findByMail(accountRepresentation.getMail())).block();
+                            return account.getPassword();
+                        }),
                 accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
     }
 
+    //todo move to reactive
     public Account siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
 
-        Account account = accountRepository.findByMail(accountRepresentation.getMail());
+        var account = Mono.from(accountRepository.findByMail(accountRepresentation.getMail())).block();
         return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
                 Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
                 Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)

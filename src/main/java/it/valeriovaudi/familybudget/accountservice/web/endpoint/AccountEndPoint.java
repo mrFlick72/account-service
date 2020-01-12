@@ -7,6 +7,7 @@ import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentati
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -23,7 +24,8 @@ public class AccountEndPoint {
 
     @GetMapping("/{mail}/mail")
     public ResponseEntity getAccountData(@PathVariable("mail") String mail) {
-        return ResponseEntity.ok(accountAdapter.domainToRepresentationModel(accountRepository.findByMail(mail)));
+        Account block = Mono.from(accountRepository.findByMail(mail)).block();
+        return ResponseEntity.ok(accountAdapter.domainToRepresentationModel(block));
     }
 
     @PutMapping("/{mail}/mail")

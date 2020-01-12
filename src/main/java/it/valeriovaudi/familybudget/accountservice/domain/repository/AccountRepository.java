@@ -6,7 +6,7 @@ import org.reactivestreams.Publisher;
 
 public interface AccountRepository {
 
-    Account findByMail(String mail);
+    Publisher<Account> findByMail(String mail);
 
     Publisher<Void> save(Account account);
 
