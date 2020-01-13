@@ -6,3 +6,7 @@ spring:
       discovery:
         enabled: true
       fail-fast: true
+
+  cache:
+    cache-names:
+      - account-service.i18n.messages
