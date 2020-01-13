@@ -5,10 +5,15 @@ package it.valeriovaudi.familybudget.accountservice.web.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+
+import java.net.URI;
 
 @EnableWebFluxSecurity
 public class SecurityOAuth2Config {
@@ -18,6 +23,9 @@ public class SecurityOAuth2Config {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        RedirectServerLogoutSuccessHandler logoutSuccessHandler = new RedirectServerLogoutSuccessHandler();
+        logoutSuccessHandler.setLogoutSuccessUrl(URI.create("/account/site/index.html"));
+
         return http.csrf().disable()
                 .authorizeExchange()
                 .and()
@@ -29,6 +37,12 @@ public class SecurityOAuth2Config {
                 .and().and()
                 .oauth2Login()
                 .and()
+
+                .logout()
+                .logoutUrl("/account/logout")
+                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/account/logout"))
+                .and()
+
 //                .authenticationConverter(new OidcReactiveOAuth2UserService())
                 .build();
 //                .defaultSuccessUrl("/site/index.html")
@@ -37,7 +51,7 @@ public class SecurityOAuth2Config {
     }
 
     @Bean
-    public OidcReactiveOAuth2UserService oidcReactiveOAuth2UserService(){
+    public OidcReactiveOAuth2UserService oidcReactiveOAuth2UserService() {
         return new OidcReactiveOAuth2UserService();
     }
 
