@@ -42,7 +42,7 @@ public class RestMessageRepository implements MessageRepository {
                 })
                 .map(stringStringHashMap -> stringStringHashMap);
 
-        return CacheMono.lookup(key -> Mono.<Signal<Map<String, String>>>justOrEmpty((Signal) manager.getCache(CACHE_REGION).get(key).get()), CACHE_KEY)
+        return CacheMono.lookup(key -> Mono.<Signal<Map<String, String>>>justOrEmpty((Signal) manager.getCache(CACHE_REGION).get(key, () -> null)), CACHE_KEY)
                 .onCacheMissResume(supplier)
                 .andWriteWith((key, value) -> Mono.fromRunnable(() -> manager.getCache(CACHE_REGION).put(key, value)));
     }
