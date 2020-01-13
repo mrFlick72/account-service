@@ -2,7 +2,6 @@ package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 
 import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,21 +15,21 @@ import java.util.function.Supplier;
 
 public class RestMessageRepository implements MessageRepository {
 
-    public static final String CACHE_REGION = "account-service.i18n.messages";
-    public static final String CACHE_KEY = "i18n.messages";
+    private static final String CACHE_REGION = "account-service.i18n.messages";
+    private static final String CACHE_KEY = "i18n.messages";
+
     private final String baseUrl;
     private final String applicationId;
     private final WebClient.Builder restTemplate;
-
-    @Autowired
-    private CacheManager manager;
+    private final CacheManager manager;
 
     public RestMessageRepository(String baseUrl,
                                  String applicationId,
-                                 WebClient.Builder restTemplate) {
+                                 WebClient.Builder restTemplate, CacheManager manager) {
         this.baseUrl = baseUrl;
         this.applicationId = applicationId;
         this.restTemplate = restTemplate;
+        this.manager = manager;
     }
 
     @Override

@@ -9,6 +9,7 @@ import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepo
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,7 @@ public class RepositoryConfig {
 
     @Bean
     public ConnectionFactory connectionFactory(@Value("${spring.r2dbc.host}") String host,
-                                         R2dbcProperties r2dbcProperties) {
+                                               R2dbcProperties r2dbcProperties) {
         System.out.println("spring.r2dbc.host: " + host);
         return ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "postgresql")
@@ -52,7 +53,8 @@ public class RepositoryConfig {
     public RestMessageRepository messageRepository(
             @Value("${i18n-messages.base-url:http://i18n-messages}") String i18nBaseUrl,
             @Value("${spring.application.name}") String applicationId,
-            WebClient.Builder restTemplate) {
-        return new RestMessageRepository(i18nBaseUrl, applicationId, restTemplate);
+            WebClient.Builder restTemplate,
+            CacheManager manager) {
+        return new RestMessageRepository(i18nBaseUrl, applicationId, restTemplate, manager);
     }
 }
