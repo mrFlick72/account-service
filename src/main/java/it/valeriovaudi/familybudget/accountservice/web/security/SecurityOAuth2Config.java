@@ -11,6 +11,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 import java.net.URI;
@@ -23,9 +24,6 @@ public class SecurityOAuth2Config {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        RedirectServerLogoutSuccessHandler logoutSuccessHandler = new RedirectServerLogoutSuccessHandler();
-        logoutSuccessHandler.setLogoutSuccessUrl(URI.create("/account/site/index.html"));
-
         return http.csrf().disable()
                 .authorizeExchange()
                 .and()
@@ -34,20 +32,23 @@ public class SecurityOAuth2Config {
                 .authorizeExchange().anyExchange().authenticated()
                 .and()
                 .oauth2ResourceServer().jwt()
-                .and().and()
+                .and()
+                .and()
                 .oauth2Login()
                 .and()
 
                 .logout()
-                .logoutUrl("/account/logout")
-                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/account/logout"))
+                .logoutSuccessHandler(logoutSuccessHandler())
+                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/singout"))
                 .and()
-
-//                .authenticationConverter(new OidcReactiveOAuth2UserService())
                 .build();
-//                .defaultSuccessUrl("/site/index.html")
-//                .userInfoEndpoint()
-//                .oidcUserService(vAuthenticatorOidcUserService());
+    }
+
+
+    private ServerLogoutSuccessHandler logoutSuccessHandler() {
+        RedirectServerLogoutSuccessHandler successHandler = new RedirectServerLogoutSuccessHandler();
+        successHandler.setLogoutSuccessUrl(URI.create("/site/index.html"));
+        return successHandler;
     }
 
     @Bean
