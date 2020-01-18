@@ -7,8 +7,6 @@ import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthe
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -16,7 +14,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.security.Principal;
 import java.util.function.Function;
 
 @Configuration
@@ -65,15 +62,5 @@ public class AccountSiteEndPoint {
             tuple.getT2().setMail(tuple.getT1());
             return tuple.getT2();
         };
-    }
-}
-
-@RestController
-class USerEndpoint {
-
-    @GetMapping("/account/authentication")
-    public Principal authentication(Principal authentication) {
-        return authentication;
-
     }
 }
