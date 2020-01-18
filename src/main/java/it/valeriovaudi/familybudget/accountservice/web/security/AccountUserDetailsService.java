@@ -1,12 +1,9 @@
 package it.valeriovaudi.familybudget.accountservice.web.security;
 
-import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 public class AccountUserDetailsService {
@@ -17,16 +14,16 @@ public class AccountUserDetailsService {
         this.accountRepository = accountRepository;
     }
 
-    public SecurityAccountDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Account account = accountRepository.findByMail(userName);
-        log.info("account: " + account.toString());
+    public Mono<SecurityAccountDetails> loadUserByUsername(String userName) throws UsernameNotFoundException {
+        return Mono.from(accountRepository.findByMail(userName))
+                .log()
+                .map(account -> new SecurityAccountDetails(account.getMail(),
+                        account.getPassword(),
+                        true,
+                        true,
+                        true,
+                        account.getEnable(),
+                        account.getUserRoles()));
 
-        return new SecurityAccountDetails(account.getMail(),
-                account.getPassword(),
-                true,
-                true,
-                true,
-                account.getEnable(),
-                account.getUserRoles());
     }
 }

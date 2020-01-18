@@ -3,6 +3,9 @@ package it.valeriovaudi.familybudget.accountservice.web.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @Slf4j
 public class UserDetailsProcessorChannelHandler {
@@ -15,12 +18,15 @@ public class UserDetailsProcessorChannelHandler {
         this.accountUserDetailsService = accountUserDetailsService;
     }
 
+    //todo move to rective
     @RabbitListener(queues = "authServerAccountServiceBridgeInboundQueue")
     public String getUserDetails(String userName) {
         log.info("userName: " + userName);
 
         try {
-            return objectMapper.writeValueAsString(accountUserDetailsService.loadUserByUsername(userName));
+            var account = Mono.from(accountUserDetailsService.loadUserByUsername(userName)).blockOptional(Duration.ofSeconds(100));
+            System.out.println(account);
+            return objectMapper.writeValueAsString(account);
         } catch (Exception e) {
             log.error("user didn't found");
         }
