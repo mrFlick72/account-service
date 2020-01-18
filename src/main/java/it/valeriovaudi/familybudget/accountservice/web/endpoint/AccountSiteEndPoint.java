@@ -49,7 +49,7 @@ public class AccountSiteEndPoint {
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))
                                 .map(setMailFrom())
-                                .map(accountAdapter::siteRepresentationModelToDomainModel)
+                                .flatMap(accountAdapter::siteRepresentationModelToDomainModel)
                                 .flatMap(account -> Mono.from(accountRepository.update(account)))
                                 .flatMap(account -> ServerResponse.noContent().build())
                 )

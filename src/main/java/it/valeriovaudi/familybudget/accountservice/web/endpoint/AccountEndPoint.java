@@ -45,28 +45,11 @@ public class AccountEndPoint {
                                     accountRepresentation.setMail(serverRequest.pathVariable("mail"));
                                     return accountRepresentation;
                                 })
-                                .map(accountAdapter::representationModelToDomainModel)
+                                .flatMap(accountAdapter::representationModelToDomainModel)
                                 .flatMap(account -> Mono.from(accountRepository.update(account)))
                                 .flatMap(ack -> ServerResponse.noContent().build())
-
                 )
                 .build();
     }
 
-/*
-    @GetMapping("/{mail}/mail")
-    public ResponseEntity getAccountData(@PathVariable("mail") String mail) {
-        Account block = Mono.from(accountRepository.findByMail(mail)).block();
-        return ResponseEntity.ok(accountAdapter.domainToRepresentationModel(block));
-    }
-
-    @PutMapping("/{mail}/mail")
-    public ResponseEntity updateAccountData(@PathVariable("mail") String mail,
-                                            @RequestBody AccountRepresentation accountRepresentation) {
-        accountRepresentation.setMail(mail);
-        Account account = accountAdapter.representationModelToDomainModel(accountRepresentation);
-        accountRepository.update(account);
-        return ResponseEntity.noContent().build();
-    }
-*/
 }

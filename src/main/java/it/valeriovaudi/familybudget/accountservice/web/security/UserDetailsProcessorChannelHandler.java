@@ -24,8 +24,9 @@ public class UserDetailsProcessorChannelHandler {
         log.info("userName: " + userName);
 
         try {
-            var account = Mono.from(accountUserDetailsService.loadUserByUsername(userName)).blockOptional(Duration.ofSeconds(100));
-            System.out.println(account);
+            var account = Mono.from(accountUserDetailsService.loadUserByUsername(userName))
+                    .blockOptional(Duration.ofSeconds(100));
+
             return objectMapper.writeValueAsString(account);
         } catch (Exception e) {
             log.error("user didn't found");

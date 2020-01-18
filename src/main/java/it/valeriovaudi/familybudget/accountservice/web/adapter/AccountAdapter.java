@@ -31,27 +31,23 @@ public class AccountAdapter {
                 account.getPhone().formattedPhone());
     }
 
-    //todo move to reactive
-    public Account representationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
-                Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
-                Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
-                        .orElseGet(() ->{
-                            var account = Mono.from(accountRepository.findByMail(accountRepresentation.getMail())).block();
-                            return account.getPassword();
-                        }),
-                accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
+    public Mono<Account> representationModelToDomainModel(AccountRepresentation accountRepresentation) {
+        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
+                .map(account -> new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
+                        Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
+                        Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
+                                .orElseGet(account::getPassword),
+                        accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH));
     }
 
-    //todo move to reactive
-    public Account siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
+    public Mono<Account> siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
+        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
+                .map(account -> new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
+                        Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
+                        Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
+                                .orElseGet(account::getPassword),
+                        account.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH));
 
-        var account = Mono.from(accountRepository.findByMail(accountRepresentation.getMail())).block();
-        return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
-                Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
-                Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
-                        .orElseGet(account::getPassword),
-                account.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
     }
 
 }
