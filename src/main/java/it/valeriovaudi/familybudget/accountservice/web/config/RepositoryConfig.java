@@ -69,10 +69,6 @@ public class RepositoryConfig {
                                                       RSocketRequester.Builder builder,
                                                       @Value("${spring.application.name}") String applicationId,
                                                       CacheManager manager) {
-
-        System.out.println(i18nHost);
-        System.out.println(i18nPort);
-
         InetSocketAddress address = new InetSocketAddress(i18nHost, i18nPort);
         TcpClientTransport clientTransport = TcpClientTransport.create(address);
         Mono<RSocketRequester> requesterMono =
