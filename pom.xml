@@ -297,6 +297,23 @@
         <profile>
             <id>kubernetes</id>
 
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-kubernetes</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-kubernetes-config</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-kubernetes-ribbon</artifactId>
+                </dependency>
+            </dependencies>
+
             <build>
                 <plugins>
                     <plugin>
@@ -329,6 +346,7 @@
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 
     <build>
