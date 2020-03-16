@@ -1,60 +1,41 @@
 package it.valeriovaudi.familybudget.accountservice.web.security;
 
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOAuth2User;
-import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorReactiveOidcUserService;
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOidcUserService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.CustomUserTypesOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
-import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
-import java.net.URI;
 import java.util.Map;
 
-@EnableWebFluxSecurity
-public class SecurityOAuth2Config {
+@EnableWebSecurity
+public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
 
     @Value("${spring.security.oauth2.client.registration.client.client-id}")
     private String familyBudgetClientRegistrationId;
 
-    @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
-                .authorizeExchange()
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
                 .and()
-                .authorizeExchange().pathMatchers("/actuator/**", "/oidc_logout.html").permitAll()
+                .authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
-                .authorizeExchange().anyExchange().authenticated()
+                .authorizeRequests().anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer().jwt()
-                .and()
-                .and()
-                .oauth2Login()
-                .and()
-
-                .logout()
-                .logoutSuccessHandler(logoutSuccessHandler())
-                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/singout"))
-                .and()
-                .build();
+                .and().and()
+                .oauth2Login().defaultSuccessUrl("/site/index.html")
+                .userInfoEndpoint()
+                .oidcUserService(vAuthenticatorOidcUserService());
     }
 
-    private ServerLogoutSuccessHandler logoutSuccessHandler() {
-        RedirectServerLogoutSuccessHandler successHandler = new RedirectServerLogoutSuccessHandler();
-        successHandler.setLogoutSuccessUrl(URI.create("/site/index.html"));
-        return successHandler;
-    }
 
-    @Bean
-    public ReactiveOAuth2UserService vAuthenticatorOidcUserService() {
-        return new VAuthenticatorReactiveOidcUserService(new OidcReactiveOAuth2UserService(),
+    public VAuthenticatorOidcUserService vAuthenticatorOidcUserService() {
+        return new VAuthenticatorOidcUserService(new OidcUserService(),
                 new CustomUserTypesOAuth2UserService(Map.of(familyBudgetClientRegistrationId, VAuthenticatorOAuth2User.class))
         );
     }

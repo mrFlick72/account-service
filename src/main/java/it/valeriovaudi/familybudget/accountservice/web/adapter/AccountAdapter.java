@@ -6,7 +6,6 @@ import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import reactor.core.publisher.Mono;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -31,23 +30,23 @@ public class AccountAdapter {
                 account.getPhone().formattedPhone());
     }
 
-    public Mono<Account> representationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
-                .map(account -> new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
-                        Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
-                        Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
-                                .orElseGet(account::getPassword),
-                        accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH));
+    public Account representationModelToDomainModel(AccountRepresentation accountRepresentation) {
+        return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
+                Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
+                Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
+                        .orElseGet(() -> accountRepository.findByMail(accountRepresentation.getMail()).getPassword()),
+                accountRepresentation.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
     }
 
-    public Mono<Account> siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
-                .map(account -> new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
-                        Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
-                        Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
-                                .orElseGet(account::getPassword),
-                        account.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH));
+    public Account siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
 
+        Account account = accountRepository.findByMail(accountRepresentation.getMail());
+        return new Account(accountRepresentation.getFirstName(), accountRepresentation.getLastName(),
+                Date.dateFor(accountRepresentation.getBirthDate()), accountRepresentation.getMail(),
+                Optional.ofNullable(accountRepresentation.getPassword()).map(passwordEncoder::encode)
+                        .orElseGet(account::getPassword),
+                account.getUserRoles(), Phone.phoneFor(accountRepresentation.getPhone()), true, Locale.ENGLISH);
     }
 
 }
+
