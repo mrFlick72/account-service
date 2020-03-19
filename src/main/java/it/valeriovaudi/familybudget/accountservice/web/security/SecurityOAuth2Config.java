@@ -30,11 +30,12 @@ public class SecurityOAuth2Config extends WebSecurityConfigurerAdapter {
                 .and().and()
                 .oauth2Login().defaultSuccessUrl("/site/index.html")
                 .userInfoEndpoint()
-                .customUserType(VAuthenticatorOAuth2User.class, familyBudgetClientRegistrationId);
+                .oidcUserService(vAuthenticatorOidcUserService());
     }
 
     public VAuthenticatorOidcUserService vAuthenticatorOidcUserService() {
-        return new VAuthenticatorOidcUserService(new OidcUserService(),
+        OidcUserService delegate = new OidcUserService();
+        return new VAuthenticatorOidcUserService(delegate,
                 new CustomUserTypesOAuth2UserService(Map.of(familyBudgetClientRegistrationId, VAuthenticatorOAuth2User.class))
         );
     }
