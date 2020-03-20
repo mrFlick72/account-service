@@ -4,7 +4,6 @@ import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepo
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorUserNameResolver;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -24,19 +23,21 @@ public class AccountSiteEndPoint {
     private final VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver;
     private final AccountRepository accountRepository;
     private final AccountAdapter accountAdapter;
+    private final ContextPathProvider contextPathProvider;
 
     public AccountSiteEndPoint(VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver,
                                AccountRepository accountRepository,
-                               AccountAdapter accountAdapter) {
+                               AccountAdapter accountAdapter, ContextPathProvider contextPathProvider) {
         this.vAuthenticatorUserNameResolver = vAuthenticatorUserNameResolver;
         this.accountRepository = accountRepository;
         this.accountAdapter = accountAdapter;
+        this.contextPathProvider = contextPathProvider;
     }
 
     @Bean
-    public RouterFunction accountSiteEndPointRoute(ServerProperties serverProperties) {
+    public RouterFunction accountSiteEndPointRoute() {
         return RouterFunctions.route()
-                .GET(serverProperties.getServlet().getContextPath() + ENDPOINT_PREFIX,
+                .GET(contextPathProvider.pathFor(ENDPOINT_PREFIX) ,
                         serverRequest -> serverRequest.principal()
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
@@ -44,7 +45,7 @@ public class AccountSiteEndPoint {
                                 .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
                 )
 
-                .PUT(serverProperties.getServlet().getContextPath() + ENDPOINT_PREFIX,
+                .PUT(contextPathProvider.pathFor(ENDPOINT_PREFIX),
                         serverRequest -> serverRequest.principal()
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))

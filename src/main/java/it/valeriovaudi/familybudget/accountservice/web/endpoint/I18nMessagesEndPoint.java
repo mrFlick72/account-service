@@ -1,7 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.web.endpoint;
 
 import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -15,17 +14,17 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 public class I18nMessagesEndPoint {
 
     private final MessageRepository messageRepository;
-    private final ServerProperties serverProperties;
+    private final ContextPathProvider contextPathProvider;
 
-    public I18nMessagesEndPoint(MessageRepository messageRepository, ServerProperties serverProperties) {
+    public I18nMessagesEndPoint(MessageRepository messageRepository, ContextPathProvider contextPathProvider) {
         this.messageRepository = messageRepository;
-        this.serverProperties = serverProperties;
+        this.contextPathProvider = contextPathProvider;
     }
 
     @Bean
     public RouterFunction i18nMessagesEndPointRoute() {
         return RouterFunctions.route()
-                .GET(serverProperties.getServlet().getContextPath() + "/messages",
+                .GET(contextPathProvider.pathFor("/messages"),
                         serverRequest ->
                                 Mono.from(messageRepository.messages())
                                         .flatMap(messages ->

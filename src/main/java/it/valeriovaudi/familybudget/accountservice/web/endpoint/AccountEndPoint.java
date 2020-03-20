@@ -4,7 +4,6 @@ import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepo
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -19,16 +18,19 @@ public class AccountEndPoint {
 
     private final AccountRepository accountRepository;
     private final AccountAdapter accountAdapter;
+    private final ContextPathProvider contextPathProvider;
 
     public AccountEndPoint(AccountRepository accountRepository,
-                           AccountAdapter accountAdapter) {
+                           AccountAdapter accountAdapter,
+                           ContextPathProvider contextPathProvider) {
         this.accountRepository = accountRepository;
         this.accountAdapter = accountAdapter;
+        this.contextPathProvider = contextPathProvider;
     }
 
     @Bean
-    public RouterFunction accountEndPointRoute(ServerProperties serverProperties) {
-        String uri = serverProperties.getServlet().getContextPath() + "/{mail}/mail";
+    public RouterFunction accountEndPointRoute() {
+        String uri = contextPathProvider.pathFor("/{mail}/mail");
         return RouterFunctions.route()
 
                 .GET(uri, serverRequest ->

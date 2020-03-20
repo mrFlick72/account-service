@@ -1,17 +1,17 @@
 package it.valeriovaudi.familybudget.accountservice;
 
+import it.valeriovaudi.familybudget.accountservice.web.endpoint.ContextPathProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.web.reactive.function.server.HandlerFilterFunction;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.WebFilter;
 
-import java.net.URI;
+import java.util.Optional;
 
 @EnableCaching
 @EnableIntegration
@@ -23,25 +23,13 @@ public class AccountServiceApplication {
     }
 
     @Bean
-    public HandlerFilterFunction contextPathHandlerFilterFunction(ServerProperties serverProperties) {
-        String contextPath = serverProperties.getServlet().getContextPath();
-        System.out.println(contextPath);
-        return (serverRequest, handlerFunction) -> {
-            ServerHttpRequest request = serverRequest.exchange().getRequest();
-
-
-            if (request.getURI().getPath().startsWith(contextPath)) {
-                System.out.println("before" + request.getURI());
-                URI uri = request.mutate().contextPath(contextPath).build().getURI();
-                System.out.println("after" + uri);
-                return handlerFunction.handle(ServerRequest.from(serverRequest).uri(uri).build());
-            }
-
-            return handlerFunction.handle(serverRequest);
-        };
+    public ContextPathProvider contextPathProvider(ServerProperties  serverProperties){
+        String contextPath = Optional.ofNullable(serverProperties.getServlet().getContextPath()).orElse("/");
+        return new ContextPathProvider(contextPath);
     }
 
     @Bean
+    @Profile("!kubernetes")
     public WebFilter contextPathWebFilter(ServerProperties serverProperties) {
         String contextPath = serverProperties.getServlet().getContextPath();
         System.out.println(contextPath);
