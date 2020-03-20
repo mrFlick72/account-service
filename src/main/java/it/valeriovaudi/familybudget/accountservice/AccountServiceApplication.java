@@ -1,13 +1,17 @@
 package it.valeriovaudi.familybudget.accountservice;
 
-import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.security.RedisOAuth2AuthorizedClientService;
+import it.valeriovaudi.familybudget.accountservice.web.endpoint.ContextPathProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.web.server.WebFilter;
+
+import java.util.Optional;
 
 @EnableCaching
 @EnableIntegration
@@ -19,8 +23,25 @@ public class AccountServiceApplication {
     }
 
     @Bean
-    public RedisOAuth2AuthorizedClientService redisOAuth2AuthorizedClientService(RedisTemplate redisTemplate,
-                                                                                 ClientRegistrationRepository clientRegistrationRepository) {
-        return new RedisOAuth2AuthorizedClientService(redisTemplate, clientRegistrationRepository);
+    public ContextPathProvider contextPathProvider(ServerProperties  serverProperties){
+        String contextPath = Optional.ofNullable(serverProperties.getServlet().getContextPath()).orElse("/");
+        return new ContextPathProvider(contextPath);
+    }
+
+    @Bean
+    @Profile("!kubernetes")
+    public WebFilter contextPathWebFilter(ServerProperties serverProperties) {
+        String contextPath = serverProperties.getServlet().getContextPath();
+        System.out.println(contextPath);
+        return (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            if (request.getURI().getPath().startsWith(contextPath)) {
+                return chain.filter(
+                        exchange.mutate()
+                                .request(request.mutate().contextPath(contextPath).build())
+                                .build());
+            }
+            return chain.filter(exchange);
+        };
     }
 }
