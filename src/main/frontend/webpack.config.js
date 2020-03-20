@@ -38,7 +38,8 @@ module.exports = {
         ]
     },
     output: {
-        filename: '[name]_bundle.js',
+        publicPath: "/account",
+        filename: 'bundle/[name]_bundle.js',
         path: BUID_DIR
     }
 };

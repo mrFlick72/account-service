@@ -5,7 +5,7 @@
 
     <groupId>it.valeriovaudi.familybudget</groupId>
     <artifactId>account-service</artifactId>
-    <version>2.1.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>account-service</name>
@@ -33,10 +33,9 @@
             <version>1.1.0</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
 
         <dependency>
@@ -102,6 +101,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot.experimental</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
@@ -114,12 +123,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>
@@ -157,7 +161,6 @@
             <version>1.12.3</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -168,6 +171,12 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot.experimental</groupId>
+            <artifactId>spring-boot-test-autoconfigure-r2dbc</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -186,17 +195,37 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot.experimental</groupId>
+                <artifactId>spring-boot-bom-r2dbc</artifactId>
+                <version>0.1.0.M3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+
+    <repositories>
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <name>Sonatype OSS Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
 
     <profiles>
         <profile>
             <id>netflix</id>
-
-            <properties>
-                <imageName>mrflick72/${project.build.finalName}:latest</imageName>
-            </properties>
-
 
             <dependencies>
                 <dependency>
@@ -230,27 +259,86 @@
                     <version>1.1.1</version>
                 </dependency>
             </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <configuration>
+                            <imageName>mrflick72/${project.build.finalName}:latest</imageName>
+                            <imageTags>
+                                <imageTag>${pom.version}</imageTag>
+                                <imageTag>latest</imageTag>
+                            </imageTags>
+                            <dockerDirectory>src/main/docker</dockerDirectory>
+                            <resources>
+                                <resource>
+                                    <targetPath>/</targetPath>
+                                    <directory>${project.build.directory}</directory>
+                                    <include>${project.build.finalName}.jar</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.activation</groupId>
+                                <artifactId>activation</artifactId>
+                                <version>1.1.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
             <id>kubernetes</id>
 
-            <properties>
-                <imageName>mrflick72/${project.build.finalName}-k8s:latest</imageName>
-            </properties>
-
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-kubernetes-core</artifactId>
+                    <artifactId>spring-cloud-starter-kubernetes</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-starter-kubernetes-config</artifactId>
                 </dependency>
             </dependencies>
-        </profile>
 
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <configuration>
+                            <imageName>mrflick72/${project.build.finalName}-k8s:latest</imageName>
+                            <imageTags>
+                                <imageTag>${pom.version}</imageTag>
+                                <imageTag>latest</imageTag>
+                            </imageTags>
+                            <dockerDirectory>src/main/docker</dockerDirectory>
+                            <resources>
+                                <resource>
+                                    <targetPath>/</targetPath>
+                                    <directory>${project.build.directory}</directory>
+                                    <include>${project.build.finalName}.jar</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.activation</groupId>
+                                <artifactId>activation</artifactId>
+                                <version>1.1.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 
@@ -311,7 +399,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <configuration>
-                    <imageName>${imageName}</imageName>
+                    <imageName>mrflick72/${project.build.finalName}:latest</imageName>
                     <imageTags>
                         <imageTag>${pom.version}</imageTag>
                         <imageTag>latest</imageTag>
@@ -335,4 +423,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
