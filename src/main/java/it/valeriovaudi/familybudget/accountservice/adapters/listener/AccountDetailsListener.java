@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.security;
+package it.valeriovaudi.familybudget.accountservice.adapters.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
