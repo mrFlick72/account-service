@@ -29,8 +29,8 @@ public class StoreAccountListener {
     public Mono<String> getUserDetails(String accountRepresentation) {
         return extractDataFor(accountRepresentation)
                 .map(representation -> new Account(
-                        representation.getOrDefault("firstname", ""),
-                        representation.getOrDefault("lastname", ""),
+                        representation.getOrDefault("firstName", ""),
+                        representation.getOrDefault("lastName", ""),
                         Date.dateFor("01/01/1970"),
                         representation.getOrDefault("email", ""),
                         Phone.nullValue(),
