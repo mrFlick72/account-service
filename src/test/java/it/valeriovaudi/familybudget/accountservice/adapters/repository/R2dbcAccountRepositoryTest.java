@@ -18,7 +18,6 @@ import java.io.File;
 import java.util.Locale;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
-import static java.util.Arrays.asList;
 
 
 @Testcontainers
@@ -56,11 +55,9 @@ public class R2dbcAccountRepositoryTest {
                 "Vaudi",
                 Date.dateFor("01/01/1970"),
                 "valerio.vaudi123@test.com",
-                "secret",
-                asList("ROLE_USER", "ROLE_ADMIN"),
                 Phone.phoneFor("+39 333 2255112"),
-                Boolean.TRUE,
-                Locale.ENGLISH);
+                Locale.ENGLISH
+        );
 
         var save = accountRepository.save(expected);
 
@@ -75,11 +72,9 @@ public class R2dbcAccountRepositoryTest {
         var expected = new Account("Valerio",
                 "Vaudi", Date.dateFor("01/01/1970"),
                 "valerio.vaudi@test.com",
-                "secret",
-                asList("ROLE_USER", "ROLE_ADMIN"),
                 Phone.nullValue(),
-                Boolean.TRUE,
-                Locale.ENGLISH);
+                Locale.ENGLISH
+        );
 
         var accountPublisher = accountRepository.findByMail("valerio.vaudi@test.com");
         StepVerifier.create(accountPublisher)
@@ -89,7 +84,7 @@ public class R2dbcAccountRepositoryTest {
 
     @Test
     public void findByMailWithPhone() {
-        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi-with-phone@test.com", "secret", asList("ROLE_USER", "ROLE_ADMIN"), Phone.phoneFor("+39 333 2255112"), Boolean.TRUE, Locale.ENGLISH);
+        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi-with-phone@test.com", Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
 
         var accountPublisher = accountRepository.findByMail("valerio.vaudi-with-phone@test.com");
         StepVerifier.create(accountPublisher)
@@ -98,8 +93,18 @@ public class R2dbcAccountRepositoryTest {
     }
 
     @Test
+    void saveAnAccountWithoutBirthDate() {
+        Account expected = new Account("Valerio", "Vaudi", null, "valerio.vaudi-with-phone@test.com", Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
+
+        var accountPublisher = accountRepository.save(expected);
+        StepVerifier.create(accountPublisher)
+                .expectNext()
+                .verifyComplete();
+    }
+
+    @Test
     public void updateAccount() {
-        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com", "secret", asList("ROLE_USER", "ROLE_ADMIN"), Phone.phoneFor("+39 333 2255112"), Boolean.FALSE, Locale.ITALIAN);
+        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com",  Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
         var accountPublisher = accountRepository.update(expected);
 
         StepVerifier.create(accountPublisher)
