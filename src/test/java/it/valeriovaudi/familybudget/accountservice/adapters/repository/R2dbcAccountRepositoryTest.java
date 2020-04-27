@@ -93,16 +93,6 @@ public class R2dbcAccountRepositoryTest {
     }
 
     @Test
-    void saveAnAccountWithoutBirthDate() {
-        Account expected = new Account("Valerio", "Vaudi", null, "valerio.vaudi-with-phone@test.com", Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
-
-        var accountPublisher = accountRepository.save(expected);
-        StepVerifier.create(accountPublisher)
-                .expectNext()
-                .verifyComplete();
-    }
-
-    @Test
     public void updateAccount() {
         Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com",  Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
         var accountPublisher = accountRepository.update(expected);
