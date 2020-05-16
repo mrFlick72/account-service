@@ -21,9 +21,6 @@ import java.util.Map;
 @EnableWebFluxSecurity
 public class SecurityOAuth2Config {
 
-    @Value("${spring.security.oauth2.client.registration.client.client-id}")
-    private String familyBudgetClientRegistrationId;
-
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
@@ -53,9 +50,9 @@ public class SecurityOAuth2Config {
     }
 
     @Bean
-    public ReactiveOAuth2UserService vAuthenticatorOidcUserService() {
+    public ReactiveOAuth2UserService vAuthenticatorOidcUserService(@Value("${vauthenticator.client.registrationId}") String registrationId) {
         return new VAuthenticatorReactiveOidcUserService(new OidcReactiveOAuth2UserService(),
-                new CustomUserTypesOAuth2UserService(Map.of(familyBudgetClientRegistrationId, VAuthenticatorOAuth2User.class))
+                new CustomUserTypesOAuth2UserService(Map.of(registrationId, VAuthenticatorOAuth2User.class))
         );
     }
 
