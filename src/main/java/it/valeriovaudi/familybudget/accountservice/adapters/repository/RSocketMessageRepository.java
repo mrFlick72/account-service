@@ -27,14 +27,15 @@ public class RSocketMessageRepository implements MessageRepository {
 
     @Override
     public Publisher<Map<String, String>> messages() {
-        Mono<Map<String, String>> loader = requester.flatMap(req ->
-                req.route("messages." + applicationId)
-                        .retrieveMono(new ParameterizedTypeReference<HashMap<String, String>>() {
-                        }).map(stringStringHashMap -> stringStringHashMap));
-
-
         return cacheManeger.getFromCache()
-                .switchIfEmpty(loader)
+                .switchIfEmpty(loader())
                 .flatMap(o -> cacheManeger.updateCache((Map<String, String>) o));
+    }
+
+    private Mono<Map<String, String>> loader() {
+        return requester.flatMap(req ->
+                    req.route("messages." + applicationId)
+                            .retrieveMono(new ParameterizedTypeReference<HashMap<String, String>>() {
+                            }).map(stringStringHashMap -> stringStringHashMap));
     }
 }
