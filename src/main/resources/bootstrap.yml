@@ -1,12 +1,3 @@
 spring:
   application:
     name: account-service
-  cloud:
-    config:
-      discovery:
-        enabled: true
-      fail-fast: true
-
-  cache:
-    cache-names:
-      - account-service.i18n.messages

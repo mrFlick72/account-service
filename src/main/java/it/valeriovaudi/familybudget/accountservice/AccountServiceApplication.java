@@ -12,13 +12,11 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.integration.config.EnableIntegration;
 import org.springframework.web.server.WebFilter;
 
 import java.util.Optional;
 
 @EnableCaching
-@EnableIntegration
 @SpringBootApplication
 public class AccountServiceApplication {
 

@@ -47,7 +47,6 @@ public class R2dbcAccountRepository implements AccountRepository {
 
     @Override
     public Publisher<Void> save(Account account) {
-        System.out.println("account: " + account);
         return databaseClient.execute("INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail,  phone, locale) VALUES (:first_Name, :last_Name, :birth_Date, :mail, :phone, :locale)")
                 .bind("first_Name", account.getFirstName())
                 .bind("last_Name", account.getLastName())
@@ -59,7 +58,6 @@ public class R2dbcAccountRepository implements AccountRepository {
                 .fetch()
                 .rowsUpdated()
                 .flatMap(result -> Mono.empty());
-
     }
 
     @Override
