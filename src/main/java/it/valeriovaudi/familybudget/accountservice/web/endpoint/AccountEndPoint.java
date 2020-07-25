@@ -1,5 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.web.endpoint;
 
+import it.valeriovaudi.familybudget.accountservice.domain.UpdateAccount;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
@@ -18,13 +19,16 @@ public class AccountEndPoint {
 
     private final AccountRepository accountRepository;
     private final AccountAdapter accountAdapter;
+    private final UpdateAccount updateAccount;
     private final ContextPathProvider contextPathProvider;
 
     public AccountEndPoint(AccountRepository accountRepository,
                            AccountAdapter accountAdapter,
+                           UpdateAccount updateAccount,
                            ContextPathProvider contextPathProvider) {
         this.accountRepository = accountRepository;
         this.accountAdapter = accountAdapter;
+        this.updateAccount = updateAccount;
         this.contextPathProvider = contextPathProvider;
     }
 
@@ -48,7 +52,7 @@ public class AccountEndPoint {
                                     return accountRepresentation;
                                 })
                                 .flatMap(accountAdapter::representationModelToDomainModel)
-                                .flatMap(account -> Mono.from(accountRepository.update(account)))
+                                .flatMap(account -> Mono.from(updateAccount.execute(account)))
                                 .flatMap(ack -> ServerResponse.noContent().build())
                 )
                 .build();
