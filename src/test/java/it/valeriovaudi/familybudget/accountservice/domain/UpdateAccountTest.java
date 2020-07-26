@@ -1,5 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
@@ -35,7 +36,7 @@ class UpdateAccountTest {
                 Phone.phoneFor("+39 333 2255112"),
                 Locale.ENGLISH
         );
-        var accountUpdate = new UpdateAccount(accountRepository, template);
+        var accountUpdate = new UpdateAccount(accountRepository, template, new ObjectMapper());
 
         when(accountRepository.save(account))
                 .thenReturn(Mono.empty());

@@ -1,5 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.web.endpoint;
 
+import it.valeriovaudi.familybudget.accountservice.domain.UpdateAccount;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
@@ -22,14 +23,16 @@ public class AccountSiteEndPoint {
 
     private final VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver;
     private final AccountRepository accountRepository;
+    private final UpdateAccount updateAccount;
     private final AccountAdapter accountAdapter;
     private final ContextPathProvider contextPathProvider;
 
     public AccountSiteEndPoint(VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver,
                                AccountRepository accountRepository,
-                               AccountAdapter accountAdapter, ContextPathProvider contextPathProvider) {
+                               UpdateAccount updateAccount, AccountAdapter accountAdapter, ContextPathProvider contextPathProvider) {
         this.vAuthenticatorUserNameResolver = vAuthenticatorUserNameResolver;
         this.accountRepository = accountRepository;
+        this.updateAccount = updateAccount;
         this.accountAdapter = accountAdapter;
         this.contextPathProvider = contextPathProvider;
     }
@@ -51,7 +54,7 @@ public class AccountSiteEndPoint {
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))
                                 .map(setMailFrom())
                                 .flatMap(accountAdapter::siteRepresentationModelToDomainModel)
-                                .flatMap(account -> Mono.from(accountRepository.update(account)))
+                                .flatMap(account -> Mono.from(updateAccount.execute(account)))
                                 .flatMap(account -> ServerResponse.noContent().build())
                 )
 

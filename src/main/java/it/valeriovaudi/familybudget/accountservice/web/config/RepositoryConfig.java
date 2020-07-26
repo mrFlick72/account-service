@@ -31,7 +31,6 @@ public class RepositoryConfig {
     @Bean
     public ConnectionFactory connectionFactory(@Value("${spring.r2dbc.host}") String host,
                                                R2dbcProperties r2dbcProperties) {
-        System.out.println("spring.r2dbc.host: " + host);
         return ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "postgresql")
                 .option(HOST, host)
