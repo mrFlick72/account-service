@@ -1,5 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
@@ -28,7 +29,7 @@ class UpdateAccountTest {
     RabbitTemplate template;
 
     @Test
-    void execute() {
+    void execute() throws JsonProcessingException {
         var account = new Account("Valerio",
                 "Vaudi",
                 Date.dateFor("01/01/1970"),
@@ -36,9 +37,15 @@ class UpdateAccountTest {
                 Phone.phoneFor("+39 333 2255112"),
                 Locale.ENGLISH
         );
-        var accountUpdate = new UpdateAccount(accountRepository, template, new ObjectMapper());
+        ObjectMapper objectMapper = new ObjectMapper();
+        var accountUpdate = new UpdateAccount(accountRepository, template, objectMapper);
+        var payload = objectMapper.writeValueAsString(
+                Map.of("email", "valerio.vaudi123@test.com",
+                        "firstName", "Valerio",
+                        "lastName", "Vaudi")
+        );
 
-        when(accountRepository.save(account))
+        when(accountRepository.update(account))
                 .thenReturn(Mono.empty());
 
         var expected = accountUpdate.execute(account);
@@ -49,8 +56,9 @@ class UpdateAccountTest {
                 .verifyComplete();
 
         verify(accountRepository, times(1))
-                .save(account);
+                .update(account);
+
         verify(template, times(1))
-                .convertAndSend("account-sync", "account-sync", Map.of("firstName", "Valerio", "lastName", "Vaudi"));
+                .convertAndSend("account-sync", "account-sync", payload);
     }
 }
