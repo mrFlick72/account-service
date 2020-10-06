@@ -3,38 +3,28 @@ package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import it.valeriovaudi.familybudget.accountservice.TestingFixture;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.r2dbc.core.DatabaseClient;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.test.StepVerifier;
 
-import java.io.File;
 import java.util.Locale;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 
 
-@Testcontainers
 public class R2dbcAccountRepositoryTest {
 
     private R2dbcAccountRepository accountRepository;
 
-
-    @Container
-    private static final DockerComposeContainer postgres = new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"))
-            .withExposedService("postgres_1", 5432);
-
-
     @BeforeEach
     public void setUp() {
-        var serviceHost = postgres.getServiceHost("postgres_1", 5432);
-        var servicePort = postgres.getServicePort("postgres_1", 5432);
+        var serviceHost = TestingFixture.POSTGRESS_HOST;
+        var servicePort = TestingFixture.POSTGRESS_PORT;
 
         ConnectionFactory connectionFactory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "postgresql")
@@ -47,6 +37,9 @@ public class R2dbcAccountRepositoryTest {
 
         DatabaseClient databaseClient = DatabaseClient.create(connectionFactory);
         accountRepository = new R2dbcAccountRepository(databaseClient);
+
+        TestingFixture.cleanDatabase(databaseClient);
+        TestingFixture.initDatabase(databaseClient);
     }
 
     @Test
@@ -94,7 +87,7 @@ public class R2dbcAccountRepositoryTest {
 
     @Test
     public void updateAccount() {
-        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com",  Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
+        Account expected = new Account("Valerio", "Vaudi", Date.dateFor("01/01/1970"), "valerio.vaudi@test.com", Phone.phoneFor("+39 333 2255112"), Locale.ENGLISH);
         var accountPublisher = accountRepository.update(expected);
 
         StepVerifier.create(accountPublisher)
