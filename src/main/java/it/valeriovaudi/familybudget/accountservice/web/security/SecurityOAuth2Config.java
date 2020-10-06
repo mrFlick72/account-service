@@ -21,7 +21,7 @@ import java.util.Map;
 @EnableWebFluxSecurity
 public class SecurityOAuth2Config {
 
-    @Value("account-service.grantedRole")
+    @Value("granted-role.account-service")
     private String grantedRole;
 
     @Bean
