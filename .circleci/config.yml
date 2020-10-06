@@ -18,7 +18,7 @@ jobs:
       - checkout
 
       - run:
-          name: start docker compose for test
+          name: build locally client-security-starter
           command: |
             git clone https://github.com/mrFlick72/client-security-starter.git
             cd client-security-starter
