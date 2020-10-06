@@ -21,6 +21,9 @@ import java.util.Map;
 @EnableWebFluxSecurity
 public class SecurityOAuth2Config {
 
+    @Value("account-service.grantedRole")
+    private String grantedRole;
+
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
@@ -28,7 +31,7 @@ public class SecurityOAuth2Config {
                 .and()
                 .authorizeExchange().pathMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
-                .authorizeExchange().anyExchange().authenticated()
+                .authorizeExchange().anyExchange().hasRole(grantedRole)
                 .and()
                 .oauth2ResourceServer().jwt()
                 .and()
