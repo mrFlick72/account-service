@@ -34,7 +34,7 @@ public class RSocketMessageRepository implements MessageRepository {
 
     private Mono<Map<String, String>> loader() {
         return requester.flatMap(req ->
-                    req.route("messages." + applicationId)
+                    req.route("/messages." + applicationId)
                             .retrieveMono(new ParameterizedTypeReference<HashMap<String, String>>() {
                             }).map(stringStringHashMap -> stringStringHashMap));
     }
