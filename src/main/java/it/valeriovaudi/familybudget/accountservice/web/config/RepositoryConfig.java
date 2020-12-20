@@ -7,7 +7,9 @@ import io.rsocket.transport.netty.client.TcpClientTransport;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheManager;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.R2dbcAccountRepository;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.RSocketMessageRepository;
+import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
+import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,6 +19,7 @@ import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.RSocketStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
@@ -48,23 +51,14 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public ReactiveCacheManager cacheManeger(ReactiveRedisTemplate reactiveRedisTemplate) {
+    public ReactiveCacheManager cacheManager(ReactiveRedisTemplate reactiveRedisTemplate) {
         return new ReactiveCacheManager(reactiveRedisTemplate);
     }
 
     @Bean
-    public RSocketMessageRepository messageRepository(RSocketStrategies rSocketStrategies,
-                                                      @Value("${i18n-messages.rsocket.host}") String i18nHost,
-                                                      @Value("${i18n-messages.rsocket.port}") int i18nPort,
-                                                      RSocketRequester.Builder builder,
-                                                      @Value("${spring.application.name}") String applicationId,
-                                                      ReactiveCacheManager cacheManeger) {
-        InetSocketAddress address = new InetSocketAddress(i18nHost, i18nPort);
-        TcpClientTransport clientTransport = TcpClientTransport.create(address);
-        Mono<RSocketRequester> requesterMono =
-                builder.rsocketStrategies(rSocketStrategies)
-                        .connect(clientTransport);
-
-        return new RSocketMessageRepository(applicationId, requesterMono, cacheManeger);
+    public MessageRepository messageRepository(@Value("${i18n-messages.base-url:http://i18n-messages}") String i18nBaseUrl,
+                                               @Value("${spring.application.name}") String applicationId,
+                                               ReactiveCacheManager cacheManager) {
+        return new RestMessageRepository(i18nBaseUrl, applicationId, WebClient.builder(), cacheManager);
     }
 }

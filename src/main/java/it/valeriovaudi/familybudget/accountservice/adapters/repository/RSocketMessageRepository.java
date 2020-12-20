@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class RSocketMessageRepository implements MessageRepository {
 
 
