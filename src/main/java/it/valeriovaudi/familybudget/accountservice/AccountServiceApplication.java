@@ -9,14 +9,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.WebFilter;
 
 import java.util.Optional;
 
-@EnableCaching
 @SpringBootApplication
 public class AccountServiceApplication {
 

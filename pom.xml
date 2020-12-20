@@ -161,11 +161,11 @@
             </exclusions>
         </dependency>
 
-        <dependency>
+   <!--     <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-graphite</artifactId>
         </dependency>
-
+-->
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
