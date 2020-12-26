@@ -46,7 +46,7 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public ReactiveCacheManager cacheManager(@Value("${i18n-messages.ttl}") Duration ttl, ReactiveRedisTemplate reactiveRedisTemplate) {
+    public ReactiveCacheManager cacheManager(@Value("${i18n-messages.ttl:10m}") Duration ttl, ReactiveRedisTemplate reactiveRedisTemplate) {
         return new ReactiveCacheManager(ttl, reactiveRedisTemplate);
     }
 
