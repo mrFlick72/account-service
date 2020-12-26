@@ -24,7 +24,7 @@ public class ReactiveCacheManager {
 
     public <T> Mono<T> updateCache(T o) {
         return reactiveRedisTemplate.opsForHash().put(CACHE_REGION, CACHE_REGION.hashCode(), o)
-                .flatMap(i -> reactiveRedisTemplate.expire(CACHE_REGION.hashCode(), ttl))
+                .then(reactiveRedisTemplate.expire(CACHE_REGION.hashCode(), ttl))
                 .then(Mono.justOrEmpty(o));
     }
 }
