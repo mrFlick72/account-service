@@ -1,6 +1,6 @@
 FROM openjdk:11
 
-ADD account-service.jar /usr/local/account-service/
+ADD target/account-service.jar /usr/local/account-service/
 
 WORKDIR /usr/local/account-service/
 
