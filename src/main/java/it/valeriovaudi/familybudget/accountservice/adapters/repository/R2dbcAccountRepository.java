@@ -5,7 +5,7 @@ import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import org.reactivestreams.Publisher;
-import org.springframework.data.r2dbc.core.DatabaseClient;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +25,7 @@ public class R2dbcAccountRepository implements AccountRepository {
 
     @Override
     public Publisher<Account> findByMail(String mail) {
-        return databaseClient.execute("SELECT * FROM ACCOUNT WHERE mail=:mail")
+        return databaseClient.sql("SELECT * FROM ACCOUNT WHERE mail=:mail")
                 .bind("mail", mail)
                 .fetch()
                 .all()
@@ -47,7 +47,7 @@ public class R2dbcAccountRepository implements AccountRepository {
 
     @Override
     public Publisher<Void> save(Account account) {
-        return databaseClient.execute("INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail,  phone, locale) VALUES (:first_Name, :last_Name, :birth_Date, :mail, :phone, :locale)")
+        return databaseClient.sql("INSERT INTO ACCOUNT (first_Name,last_Name, birth_Date, mail,  phone, locale) VALUES (:first_Name, :last_Name, :birth_Date, :mail, :phone, :locale)")
                 .bind("first_Name", account.getFirstName())
                 .bind("last_Name", account.getLastName())
                 .bind("birth_Date", account.getBirthDate().getLocalDate())
@@ -62,7 +62,7 @@ public class R2dbcAccountRepository implements AccountRepository {
 
     @Override
     public Publisher<Void> update(Account account) {
-        return databaseClient.execute("UPDATE ACCOUNT SET first_Name=:first_Name, last_Name=:last_Name, birth_Date=:birth_Date,  phone=:phone, locale=:locale WHERE mail=:mail")
+        return databaseClient.sql("UPDATE ACCOUNT SET first_Name=:first_Name, last_Name=:last_Name, birth_Date=:birth_Date,  phone=:phone, locale=:locale WHERE mail=:mail")
                 .bind("first_Name", account.getFirstName())
                 .bind("last_Name", account.getLastName())
                 .bind("birth_Date", account.getBirthDate().getLocalDate())
