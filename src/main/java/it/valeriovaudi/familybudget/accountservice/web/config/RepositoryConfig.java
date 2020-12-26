@@ -3,10 +3,8 @@ package it.valeriovaudi.familybudget.accountservice.web.config;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
-import io.rsocket.transport.netty.client.TcpClientTransport;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheManager;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.R2dbcAccountRepository;
-import it.valeriovaudi.familybudget.accountservice.adapters.repository.RSocketMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
@@ -17,12 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
-import org.springframework.messaging.rsocket.RSocketRequester;
-import org.springframework.messaging.rsocket.RSocketStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.net.InetSocketAddress;
+import java.time.Duration;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 
@@ -51,8 +46,8 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public ReactiveCacheManager cacheManager(ReactiveRedisTemplate reactiveRedisTemplate) {
-        return new ReactiveCacheManager(reactiveRedisTemplate);
+    public ReactiveCacheManager cacheManager(@Value("${i18n-messages.ttl}") Duration ttl, ReactiveRedisTemplate reactiveRedisTemplate) {
+        return new ReactiveCacheManager(ttl, reactiveRedisTemplate);
     }
 
     @Bean
