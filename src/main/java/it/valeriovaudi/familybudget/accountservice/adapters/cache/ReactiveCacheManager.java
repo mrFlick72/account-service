@@ -19,12 +19,13 @@ public class ReactiveCacheManager {
     }
 
     public <T> Mono<T> getFromCache() {
-        return reactiveRedisTemplate.opsForHash().get(CACHE_REGION, CACHE_REGION.hashCode());
+        return reactiveRedisTemplate.opsForValue().get(CACHE_REGION);
     }
 
     public <T> Mono<T> updateCache(T o) {
-        return reactiveRedisTemplate.opsForHash().put(CACHE_REGION, CACHE_REGION.hashCode(), o)
-                .then(reactiveRedisTemplate.expire(CACHE_REGION.hashCode(), ttl))
+        System.out.println("ttl " + ttl);
+        return reactiveRedisTemplate.opsForValue().set(CACHE_REGION, o)
+                .then(reactiveRedisTemplate.expire(CACHE_REGION, ttl))
                 .then(Mono.justOrEmpty(o));
     }
 }
