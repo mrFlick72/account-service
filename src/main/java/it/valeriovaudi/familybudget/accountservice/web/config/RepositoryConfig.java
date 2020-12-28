@@ -18,6 +18,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 
@@ -51,9 +52,12 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public MessageRepository messageRepository(@Value("${i18n-messages.base-url:http://i18n-messages}") String i18nBaseUrl,
+    public MessageRepository messageRepository(Optional<WebClient.Builder> optional,
+                                               @Value("${i18n-messages.base-url:http://i18n-messages}") String i18nBaseUrl,
                                                @Value("${spring.application.name}") String applicationId,
                                                ReactiveCacheManager cacheManager) {
-        return new RestMessageRepository(i18nBaseUrl, applicationId, WebClient.builder(), cacheManager);
+        WebClient.Builder builder = optional.orElse(WebClient.builder());
+        WebClient template = builder.build();
+        return new RestMessageRepository(i18nBaseUrl, applicationId, template, cacheManager);
     }
 }

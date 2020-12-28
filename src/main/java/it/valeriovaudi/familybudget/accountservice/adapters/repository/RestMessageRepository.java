@@ -13,12 +13,12 @@ public class RestMessageRepository implements MessageRepository {
 
     private final String i18nBaseUrl;
     private final String applicationId;
-    private final WebClient.Builder webClient;
+    private final WebClient webClient;
     private final ReactiveCacheManager cacheManager;
 
     public RestMessageRepository(String i18nBaseUrl,
                                  String applicationId,
-                                 WebClient.Builder webClient,
+                                 WebClient webClient,
                                  ReactiveCacheManager cacheManager) {
         this.i18nBaseUrl = i18nBaseUrl;
         this.cacheManager = cacheManager;
@@ -34,7 +34,7 @@ public class RestMessageRepository implements MessageRepository {
     }
 
     private Mono loader() {
-        return webClient.build()
+        return webClient
                 .get().uri(i18nBaseUrl + "/messages/" + applicationId)
                 .exchangeToMono(clientResponse -> clientResponse.bodyToMono(HashMap.class))
                 .map(hashMap -> hashMap);
