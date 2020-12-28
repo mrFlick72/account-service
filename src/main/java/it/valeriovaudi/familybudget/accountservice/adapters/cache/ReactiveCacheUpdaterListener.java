@@ -28,9 +28,8 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
     }
 
     public Mono listen() {
-        return  fromCompletionStage(sqsAsyncClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()));
-//                .log();
-//                .then(reactiveCacheManager.evictCache());
+        return fromCompletionStage(sqsAsyncClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()))
+                .then(reactiveCacheManager.evictCache());
     }
 
     @Override

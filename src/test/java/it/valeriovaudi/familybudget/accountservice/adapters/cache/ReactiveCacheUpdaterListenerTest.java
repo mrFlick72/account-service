@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -35,13 +36,19 @@ class ReactiveCacheUpdaterListenerTest {
 
         ReceiveMessageRequest request = ReceiveMessageRequest.builder().queueUrl(queueUrl).build();
         ReceiveMessageResponse sqsResponse =  ReceiveMessageResponse.builder().build();
+
         given(sqsAsyncClient.receiveMessage(request))
                 .willReturn(CompletableFuture.supplyAsync(() -> sqsResponse));
+
+        given(reactiveCacheManager.evictCache())
+                .willReturn(Mono.empty());
 
 //        reactiveCacheUpdaterListener.run(new DefaultApplicationArguments());
 
         StepVerifier.create(reactiveCacheUpdaterListener.listen())
                 .expectNext(sqsResponse)
-                .verifyComplete();
+                .expectComplete();
+
+        verify(reactiveCacheManager).evictCache();
     }
 }
