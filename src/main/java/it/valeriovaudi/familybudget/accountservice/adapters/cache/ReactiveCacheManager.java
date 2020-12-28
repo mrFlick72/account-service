@@ -34,6 +34,6 @@ public class ReactiveCacheManager {
     }
 
     public Mono<Void> evictCache(){
-        return reactiveRedisTemplate.opsForHash().delete(CACHE_REGION);
+        return reactiveRedisTemplate.opsForHash().delete(CACHE_REGION).then(Mono.empty());
     }
 }
