@@ -15,8 +15,8 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 
 @ExtendWith(MockitoExtension.class)
 class ReactiveCacheUpdaterListenerTest {
@@ -44,10 +44,9 @@ class ReactiveCacheUpdaterListenerTest {
                 .willReturn(Mono.empty());
 
         StepVerifier.create(reactiveCacheUpdaterListener.listen())
-//                .expectNoEvent(Duration.ofSeconds(2))
                 .expectComplete()
                 .verify();
 
-//        verify(reactiveCacheManager).evictCache();
+        verify(reactiveCacheManager, times(2)).evictCache();
     }
 }

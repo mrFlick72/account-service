@@ -4,6 +4,7 @@ import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheManager;
+import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheUpdaterListener;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.R2dbcAccountRepository;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
@@ -16,6 +17,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -38,7 +45,6 @@ public class RepositoryConfig {
                 .option(PASSWORD, r2dbcProperties.getPassword())
                 .option(DATABASE, "account_service")
                 .build());
-
     }
 
     @Bean
@@ -49,6 +55,30 @@ public class RepositoryConfig {
     @Bean
     public ReactiveCacheManager cacheManager(@Value("${i18n-messages.ttl:10m}") Duration ttl, ReactiveRedisTemplate reactiveRedisTemplate) {
         return new ReactiveCacheManager(ttl, reactiveRedisTemplate);
+    }
+
+    @Bean
+    public ReactiveCacheUpdaterListener reactiveCacheUpdaterListener(@Value("${i18n-messages.cache.updater.listener.sleeping:10m}") Duration sleeping,
+                                                                     @Value("${i18n-messages.cache.updater.listener.queue-url}") String queueUrl,
+                                                                     ReactiveCacheManager reactiveCacheManager,
+                                                                     SqsAsyncClient sqsAsyncClient) {
+        return new ReactiveCacheUpdaterListener(sleeping, Flux.just(1).repeat(), queueUrl, reactiveCacheManager, sqsAsyncClient);
+    }
+
+    @Bean
+    public AwsCredentialsProvider awsCredentialsProvider(@Value("${aws.access-key}") String accessKey,
+                                                         @Value("${aws.secret-key}") String awsSecretKey) {
+        return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, awsSecretKey));
+    }
+
+
+    @Bean
+    public SqsAsyncClient sqsAsyncClient(@Value("${aws.region}") String awsRegion,
+                                         AwsCredentialsProvider awsCredentialsProvider) {
+        return SqsAsyncClient.builder().
+                credentialsProvider(awsCredentialsProvider).
+                region(Region.of(awsRegion)).
+                build();
     }
 
     @Bean

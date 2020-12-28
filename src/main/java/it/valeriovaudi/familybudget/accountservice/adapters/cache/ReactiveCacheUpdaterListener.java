@@ -30,22 +30,16 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
         this.sqsAsyncClient = sqsAsyncClient;
     }
 
-    Flux listen() {
+    public Flux listen() {
         return whileLoopFluxProvider
                 .delayElements(sleepingTime)
-                .flatMap(tick -> fromCompletionStage(sqsAsyncClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build())))
-                .flatMap(response -> {
-                    System.out.println(response);
-                    return reactiveCacheManager.evictCache();
-                });
+                .log()
+                .flatMap(tick -> fromCompletionStage(sqsAsyncClient.receiveMessage(makeARequest())))
+                .flatMap(response -> reactiveCacheManager.evictCache());
     }
 
-    private void sleep() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    private ReceiveMessageRequest makeARequest() {
+        return ReceiveMessageRequest.builder().queueUrl(queueUrl).build();
     }
 
     @Override
