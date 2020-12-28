@@ -5,6 +5,7 @@ import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheManager;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheUpdaterListener;
+import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReceiveMessageRequestFactory;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.R2dbcAccountRepository;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
@@ -58,11 +59,22 @@ public class RepositoryConfig {
     }
 
     @Bean
+    public ReceiveMessageRequestFactory receiveMessageRequestFactory(@Value("${i18n-messages.cache.updater.listener.queueUrl}") String queueUrl,
+                                                                     @Value("${i18n-messages.cache.updater.listener.maxNumberOfMessages}") Integer maxNumberOfMessages,
+                                                                     @Value("${i18n-messages.cache.updater.listener.visibilityTimeout}") Integer visibilityTimeout,
+                                                                     @Value("${i18n-messages.cache.updater.listener.waitTimeSeconds}") Integer waitTimeSeconds
+
+                                                                     ) {
+        return new ReceiveMessageRequestFactory(queueUrl, maxNumberOfMessages, visibilityTimeout, waitTimeSeconds);
+    }
+
+    @Bean
     public ReactiveCacheUpdaterListener reactiveCacheUpdaterListener(@Value("${i18n-messages.cache.updater.listener.sleeping:10m}") Duration sleeping,
-                                                                     @Value("${i18n-messages.cache.updater.listener.queue-url}") String queueUrl,
+                                                                     ReceiveMessageRequestFactory receiveMessageRequestFactory,
                                                                      ReactiveCacheManager reactiveCacheManager,
                                                                      SqsAsyncClient sqsAsyncClient) {
-        return new ReactiveCacheUpdaterListener(sleeping, Flux.just(1).repeat(), queueUrl, reactiveCacheManager, sqsAsyncClient);
+        return new ReactiveCacheUpdaterListener(sleeping, Flux.just(1).repeat(),
+                receiveMessageRequestFactory, reactiveCacheManager, sqsAsyncClient);
     }
 
     @Bean

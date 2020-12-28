@@ -30,11 +30,12 @@ class ReactiveCacheUpdaterListenerTest {
     @Test
     void listenTo() throws Exception {
         String queueUrl = "http://queue-url";
+        ReceiveMessageRequestFactory factory = new ReceiveMessageRequestFactory(queueUrl, 1, 1, 1);
         ReactiveCacheUpdaterListener reactiveCacheUpdaterListener =
-                new ReactiveCacheUpdaterListener(Duration.ofSeconds(2), Flux.just(1, 1), queueUrl,
-                        reactiveCacheManager, sqsAsyncClient);
+                new ReactiveCacheUpdaterListener(Duration.ofSeconds(2), Flux.just(1, 1),
+                        factory, reactiveCacheManager, sqsAsyncClient);
 
-        ReceiveMessageRequest request = ReceiveMessageRequest.builder().queueUrl(queueUrl).build();
+        ReceiveMessageRequest request = factory.makeARequest();
         ReceiveMessageResponse sqsResponse = ReceiveMessageResponse.builder().build();
 
         given(sqsAsyncClient.receiveMessage(request))
