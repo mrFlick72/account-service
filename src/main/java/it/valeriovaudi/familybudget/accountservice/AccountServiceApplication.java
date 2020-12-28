@@ -32,22 +32,6 @@ public class AccountServiceApplication {
         return new ContextPathProvider(contextPath);
     }
 
-    @Bean
-    public WebFilter contextPathWebFilter(ServerProperties serverProperties) {
-        String contextPath = serverProperties.getServlet().getContextPath();
-        LOGGER.info("contextPath: " + contextPath);
-        return contextPath != null ?
-                (exchange, chain) -> {
-                    ServerHttpRequest request = exchange.getRequest();
-                    if (request.getURI().getPath().startsWith(contextPath)) {
-                        return chain.filter(
-                                exchange.mutate()
-                                        .request(request.mutate().contextPath(contextPath).build())
-                                        .build());
-                    }
-                    return chain.filter(exchange);
-                } : (exchange, chain) -> chain.filter(exchange);
-    }
 
     @Bean
     MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name:}") String applicationName) {
