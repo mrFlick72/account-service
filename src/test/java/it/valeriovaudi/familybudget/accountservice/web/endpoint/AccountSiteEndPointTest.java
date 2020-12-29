@@ -18,8 +18,9 @@ import reactor.core.publisher.Mono;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.*;
 
-@WebFluxTest(value = {AccountEndPoint.class, AdapterTestConfig.class})
-class AccountEndPointTest {
+@WebFluxTest(value = {AccountSiteEndPoint.class, AdapterTestConfig.class})
+class AccountSiteEndPointTest {
+    private final static String ENDPOINT_PREFIX = "/site/user-info";
 
     @Autowired
     private ApplicationContext context;
@@ -36,29 +37,23 @@ class AccountEndPointTest {
     public void setUp() {
         webTestClient = WebTestClient.bindToApplicationContext(context)
                 .apply(springSecurity())
-                .apply(mockUser())
+                .apply(mockOidcLogin().userInfoToken(builder -> builder.email(TestingFixture.ACCOUNT_MAIL)))
                 .build();
     }
 
     @Test
-    void getUserInfoFromEmail() {
-        Account account = TestingFixture.anAccount();
-
+    void whenGetAUserAccountDetails() {
         given(accountRepository.findByMail("user.mail@mail.com"))
-                .willReturn(Mono.just(account));
+                .willReturn(Mono.just(TestingFixture.anAccount()));
 
-
-        String expected = TestingFixture.anAccountAsJsonString();
-        webTestClient.get()
-                .uri("/user.mail@mail.com/mail")
-                .accept(MediaType.APPLICATION_JSON)
+        webTestClient.get().uri(ENDPOINT_PREFIX)
                 .exchange()
                 .expectStatus().is2xxSuccessful()
-                .expectBody().json(expected);
+                .expectBody().json(TestingFixture.anAccountAsJsonString());
     }
 
     @Test
-    void updateAccount() {
+    void whenUpdateAUserAccountDetails() {
         Account account = TestingFixture.anAccount();
 
         given(updateAccount.execute(account))
@@ -66,11 +61,12 @@ class AccountEndPointTest {
 
         String content = TestingFixture.anAccountAsJsonString();
         webTestClient.mutateWith(csrf()).put()
-                .uri("/user.mail@mail.com/mail")
+                .uri(ENDPOINT_PREFIX)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(content))
                 .exchange()
                 .expectStatus().is2xxSuccessful();
+
     }
 }

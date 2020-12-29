@@ -1,7 +1,12 @@
 package it.valeriovaudi.familybudget.accountservice;
 
 
+import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
+import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
+import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
 import org.springframework.r2dbc.core.DatabaseClient;
+
+import java.util.Locale;
 
 public class TestingFixture {
 
@@ -20,4 +25,19 @@ public class TestingFixture {
                 .fetch().rowsUpdated().block();
     }
 
+    public static Account anAccount() {
+        return new Account("FIRST_NAME",
+                "LAST_NAME",
+                Date.dateFor("01/01/1970"),
+                "user.mail@mail.com",
+                Phone.nullValue(),
+                Locale.ENGLISH
+        );
+    }
+
+    public static String anAccountAsJsonString() {
+        return "{\"firstName\":\"FIRST_NAME\",\"lastName\":\"LAST_NAME\",\"birthDate\":\"01/01/1970\",\"mail\":\"user.mail@mail.com\",\"phone\":\"\"}";
+    }
+
+    public static String ACCOUNT_MAIL = "user.mail@mail.com";
 }
