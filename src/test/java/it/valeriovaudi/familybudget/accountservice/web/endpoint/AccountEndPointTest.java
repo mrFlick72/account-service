@@ -69,14 +69,15 @@ class AccountEndPointTest {
         given(accountRepository.findByMail("user.mail@mail.com"))
                 .willReturn(Mono.just(account));
 
-        System.out.println(
-                webTestClient.get()
+
+        String expected = "{\"firstName\":\"FIRST_NAME\",\"lastName\":\"LAST_NAME\",\"birthDate\":\"01/01/1970\",\"mail\":\"user.mail@mail\",\"phone\":\"\"}";
+        webTestClient.get()
                         .uri("/user.mail@mail.com/mail")
                         .accept(MediaType.APPLICATION_JSON)
                         .exchange()
                         .expectStatus().is2xxSuccessful()
-                        .returnResult(String.class)
-        );
+                        .expectBody().json(expected);
+
 
     }
 }
