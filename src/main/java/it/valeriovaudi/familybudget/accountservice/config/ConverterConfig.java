@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.config;
+package it.valeriovaudi.familybudget.accountservice.config;
 
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
 import org.springframework.context.annotation.Bean;

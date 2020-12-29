@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.config;
+package it.valeriovaudi.familybudget.accountservice.config;
 
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;

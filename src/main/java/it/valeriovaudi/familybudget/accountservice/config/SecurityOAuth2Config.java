@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.config;
+package it.valeriovaudi.familybudget.accountservice.config;
 
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOAuth2User;
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorReactiveOidcUserService;

@@ -1,4 +1,4 @@
-package it.valeriovaudi.familybudget.accountservice.web.config;
+package it.valeriovaudi.familybudget.accountservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.valeriovaudi.familybudget.accountservice.domain.UpdateAccount;

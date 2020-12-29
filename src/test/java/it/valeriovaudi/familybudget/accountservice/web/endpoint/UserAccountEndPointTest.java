@@ -25,13 +25,13 @@ class UserAccountEndPointTest {
     @Autowired
     private ApplicationContext context;
 
+    private WebTestClient webTestClient;
+
     @MockBean
     private AccountRepository accountRepository;
 
     @MockBean
     private UpdateAccount updateAccount;
-
-    private WebTestClient webTestClient;
 
     @BeforeEach
     public void setUp() {
