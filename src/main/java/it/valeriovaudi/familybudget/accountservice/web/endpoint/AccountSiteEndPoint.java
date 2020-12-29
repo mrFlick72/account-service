@@ -19,8 +19,8 @@ import java.util.function.Function;
 @Configuration
 public class AccountSiteEndPoint {
 
-    private final static String ENDPOINT_PREFIX = "/site/user-info";
 
+    private final static String ENDPOINT_PREFIX = "/user-account";
     private final VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver;
     private final AccountRepository accountRepository;
     private final UpdateAccount updateAccount;

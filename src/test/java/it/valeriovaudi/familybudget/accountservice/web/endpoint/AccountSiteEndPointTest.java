@@ -20,7 +20,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 @WebFluxTest(value = {AccountSiteEndPoint.class, AdapterTestConfig.class})
 class AccountSiteEndPointTest {
-    private final static String ENDPOINT_PREFIX = "/site/user-info";
+    private final static String ENDPOINT_PREFIX = "/user-account";
 
     @Autowired
     private ApplicationContext context;
