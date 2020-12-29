@@ -10,6 +10,8 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.util.Map;
 
+import static it.valeriovaudi.familybudget.accountservice.TestingFixture.i18nsMessage;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ReactiveCacheManagerTest {
@@ -38,13 +40,13 @@ class ReactiveCacheManagerTest {
     @Test
     @Order(2)
     void whenFillCache() {
-        StepVerifier.create(reactiveCacheManager.updateCache(Map.of("key1", "value1")))
-                .expectNext(Map.of("key1", "value1"))
+        StepVerifier.create(reactiveCacheManager.updateCache(i18nsMessage()))
+                .expectNext(i18nsMessage())
                 .expectComplete()
                 .verify();
 
         StepVerifier.create(reactiveCacheManager.getFromCache())
-                .expectNext(Map.of("key1", "value1"))
+                .expectNext(i18nsMessage())
                 .expectComplete()
                 .verify();
     }
@@ -52,13 +54,13 @@ class ReactiveCacheManagerTest {
     @Test
     @Order(3)
     void whenEvictAFilledCache() {
-        StepVerifier.create(reactiveCacheManager.updateCache(Map.of("key1", "value1")))
-                .expectNext(Map.of("key1", "value1"))
+        StepVerifier.create(reactiveCacheManager.updateCache(i18nsMessage()))
+                .expectNext(i18nsMessage())
                 .expectComplete()
                 .verify();
 
         StepVerifier.create(reactiveCacheManager.getFromCache())
-                .expectNext(Map.of("key1", "value1"))
+                .expectNext(i18nsMessage())
                 .expectComplete()
                 .verify();
 

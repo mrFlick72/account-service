@@ -4,9 +4,14 @@ package it.valeriovaudi.familybudget.accountservice;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.r2dbc.core.DatabaseClient;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class TestingFixture {
 
@@ -39,5 +44,19 @@ public class TestingFixture {
         return "{\"firstName\":\"FIRST_NAME\",\"lastName\":\"LAST_NAME\",\"birthDate\":\"01/01/1970\",\"mail\":\"user.mail@mail.com\",\"phone\":\"\"}";
     }
 
+    public static Map<String, String> i18nsMessage() {
+        return Map.of("key1", "value1");
+    }
+
     public static String ACCOUNT_MAIL = "user.mail@mail.com";
+
+    public static ReactiveRedisTemplate newReactiveRedisTemplate() {
+        RedisSerializationContext<Object, Object> serializationContextBuilder = RedisSerializationContext.java();
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("localhost", 36379);
+        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(configuration);
+        connectionFactory.afterPropertiesSet();
+
+        return new ReactiveRedisTemplate(connectionFactory, serializationContextBuilder);
+    }
+
 }
