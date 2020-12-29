@@ -18,8 +18,8 @@ import reactor.core.publisher.Mono;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.*;
 
-@WebFluxTest(value = {AccountSiteEndPoint.class, AdapterTestConfig.class})
-class AccountSiteEndPointTest {
+@WebFluxTest(value = {UserAccountEndPoint.class, AdapterTestConfig.class})
+class UserAccountEndPointTest {
     private final static String ENDPOINT_PREFIX = "/user-account";
 
     @Autowired

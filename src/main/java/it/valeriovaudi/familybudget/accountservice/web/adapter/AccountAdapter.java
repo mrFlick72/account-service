@@ -19,16 +19,8 @@ public class AccountAdapter {
                 account.getPhone().formattedPhone());
     }
 
-    public Mono<Account> representationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return Mono.defer(() -> Mono.just(new Account(accountRepresentation.getFirstName(),
-                accountRepresentation.getLastName(),
-                Date.dateFor(accountRepresentation.getBirthDate()),
-                accountRepresentation.getMail(),
-                Phone.phoneFor(accountRepresentation.getPhone()),
-                Locale.ENGLISH)));
-    }
 
-    public Mono<Account> siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
+    public Mono<Account> representationModelToDomainModel(AccountRepresentation accountRepresentation) {
         return Mono.defer(() -> Mono.just(new Account(accountRepresentation.getFirstName(),
                 accountRepresentation.getLastName(),
                 Date.dateFor(accountRepresentation.getBirthDate()),

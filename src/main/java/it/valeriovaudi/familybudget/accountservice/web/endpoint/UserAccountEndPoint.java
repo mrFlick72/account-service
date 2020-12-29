@@ -17,7 +17,7 @@ import reactor.util.function.Tuple2;
 import java.util.function.Function;
 
 @Configuration
-public class AccountSiteEndPoint {
+public class UserAccountEndPoint {
 
 
     private final static String ENDPOINT_PREFIX = "/user-account";
@@ -26,7 +26,7 @@ public class AccountSiteEndPoint {
     private final UpdateAccount updateAccount;
     private final AccountAdapter accountAdapter;
 
-    public AccountSiteEndPoint(VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver,
+    public UserAccountEndPoint(VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver,
                                AccountRepository accountRepository,
                                UpdateAccount updateAccount, AccountAdapter accountAdapter) {
         this.vAuthenticatorUserNameResolver = vAuthenticatorUserNameResolver;
@@ -51,7 +51,7 @@ public class AccountSiteEndPoint {
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))
                                 .map(setMailFrom())
-                                .flatMap(accountAdapter::siteRepresentationModelToDomainModel)
+                                .flatMap(accountAdapter::representationModelToDomainModel)
                                 .flatMap(account -> Mono.from(updateAccount.execute(account)))
                                 .flatMap(account -> ServerResponse.noContent().build())
                 )
