@@ -3,8 +3,7 @@ package it.valeriovaudi.familybudget.accountservice.web.adapter;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Date;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Phone;
-import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
-import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
+import it.valeriovaudi.familybudget.accountservice.web.representation.AccountRepresentation;
 import reactor.core.publisher.Mono;
 
 import java.util.Locale;

@@ -3,7 +3,7 @@ package it.valeriovaudi.familybudget.accountservice.web.endpoint;
 import it.valeriovaudi.familybudget.accountservice.domain.UpdateAccount;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import it.valeriovaudi.familybudget.accountservice.web.adapter.AccountAdapter;
-import it.valeriovaudi.familybudget.accountservice.web.model.AccountRepresentation;
+import it.valeriovaudi.familybudget.accountservice.web.representation.AccountRepresentation;
 import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorUserNameResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
