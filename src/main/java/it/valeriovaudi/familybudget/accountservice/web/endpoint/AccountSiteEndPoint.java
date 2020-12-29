@@ -25,22 +25,20 @@ public class AccountSiteEndPoint {
     private final AccountRepository accountRepository;
     private final UpdateAccount updateAccount;
     private final AccountAdapter accountAdapter;
-    private final ContextPathProvider contextPathProvider;
 
     public AccountSiteEndPoint(VAuthenticatorUserNameResolver vAuthenticatorUserNameResolver,
                                AccountRepository accountRepository,
-                               UpdateAccount updateAccount, AccountAdapter accountAdapter, ContextPathProvider contextPathProvider) {
+                               UpdateAccount updateAccount, AccountAdapter accountAdapter) {
         this.vAuthenticatorUserNameResolver = vAuthenticatorUserNameResolver;
         this.accountRepository = accountRepository;
         this.updateAccount = updateAccount;
         this.accountAdapter = accountAdapter;
-        this.contextPathProvider = contextPathProvider;
     }
 
     @Bean
     public RouterFunction accountSiteEndPointRoute() {
         return RouterFunctions.route()
-                .GET(contextPathProvider.pathFor(ENDPOINT_PREFIX) ,
+                .GET(ENDPOINT_PREFIX ,
                         serverRequest -> serverRequest.principal()
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
@@ -48,7 +46,7 @@ public class AccountSiteEndPoint {
                                 .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
                 )
 
-                .PUT(contextPathProvider.pathFor(ENDPOINT_PREFIX),
+                .PUT(ENDPOINT_PREFIX,
                         serverRequest -> serverRequest.principal()
                                 .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))

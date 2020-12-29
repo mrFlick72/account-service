@@ -20,26 +20,24 @@ public class AccountEndPoint {
     private final AccountRepository accountRepository;
     private final AccountAdapter accountAdapter;
     private final UpdateAccount updateAccount;
-    private final ContextPathProvider contextPathProvider;
 
     public AccountEndPoint(AccountRepository accountRepository,
                            AccountAdapter accountAdapter,
-                           UpdateAccount updateAccount,
-                           ContextPathProvider contextPathProvider) {
+                           UpdateAccount updateAccount) {
         this.accountRepository = accountRepository;
         this.accountAdapter = accountAdapter;
         this.updateAccount = updateAccount;
-        this.contextPathProvider = contextPathProvider;
     }
 
     @Bean
     public RouterFunction accountEndPointRoute() {
-        String uri = contextPathProvider.pathFor("/{mail}/mail");
+        String uri = "/{mail}/mail";
         return RouterFunctions.route()
 
                 .GET(uri, serverRequest ->
                         Mono.from(accountRepository.findByMail(serverRequest.pathVariable("mail")))
                                 .map(accountAdapter::domainToRepresentationModel)
+                                .log()
                                 .flatMap(accountRepresentation ->
                                         ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
 

@@ -10,11 +10,6 @@ import reactor.core.publisher.Mono;
 import java.util.Locale;
 
 public class AccountAdapter {
-    private final AccountRepository accountRepository;
-
-    public AccountAdapter(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
 
     public AccountRepresentation domainToRepresentationModel(Account account) {
         return new AccountRepresentation(account.getFirstName(),
@@ -25,23 +20,21 @@ public class AccountAdapter {
     }
 
     public Mono<Account> representationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
-                .map(account -> new Account(accountRepresentation.getFirstName(),
-                        accountRepresentation.getLastName(),
-                        Date.dateFor(accountRepresentation.getBirthDate()),
-                        accountRepresentation.getMail(),
-                        Phone.phoneFor(accountRepresentation.getPhone()),
-                        Locale.ENGLISH));
+        return Mono.defer(() -> Mono.just(new Account(accountRepresentation.getFirstName(),
+                accountRepresentation.getLastName(),
+                Date.dateFor(accountRepresentation.getBirthDate()),
+                accountRepresentation.getMail(),
+                Phone.phoneFor(accountRepresentation.getPhone()),
+                Locale.ENGLISH)));
     }
 
     public Mono<Account> siteRepresentationModelToDomainModel(AccountRepresentation accountRepresentation) {
-        return Mono.from(accountRepository.findByMail(accountRepresentation.getMail()))
-                .map(account -> new Account(accountRepresentation.getFirstName(),
-                        accountRepresentation.getLastName(),
-                        Date.dateFor(accountRepresentation.getBirthDate()),
-                        accountRepresentation.getMail(),
-                        Phone.phoneFor(accountRepresentation.getPhone()),
-                        Locale.ENGLISH));
+        return Mono.defer(() -> Mono.just(new Account(accountRepresentation.getFirstName(),
+                accountRepresentation.getLastName(),
+                Date.dateFor(accountRepresentation.getBirthDate()),
+                accountRepresentation.getMail(),
+                Phone.phoneFor(accountRepresentation.getPhone()),
+                Locale.ENGLISH)));
 
     }
 
