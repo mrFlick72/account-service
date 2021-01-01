@@ -1,15 +1,11 @@
 package it.valeriovaudi.familybudget.accountservice.adapters.cache;
 
-import org.apache.logging.log4j.message.Message;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.time.Duration;
-import java.util.List;
 
 import static reactor.core.publisher.Mono.fromCompletionStage;
 
