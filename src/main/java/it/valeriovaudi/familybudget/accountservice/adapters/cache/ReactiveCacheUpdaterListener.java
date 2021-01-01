@@ -4,6 +4,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import reactor.core.publisher.Flux;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.time.Duration;
 
@@ -33,9 +35,14 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
     public Flux listen() {
         return whileLoopFluxProvider
                 .delayElements(sleepingTime)
-                .log()
                 .flatMap(req -> fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())))
-                .flatMap(response -> reactiveCacheManager.evictCache());
+                .log()
+
+                .flatMap(response -> Flux.fromIterable(((ReceiveMessageResponse) response).messages()))
+                .log()
+
+                .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(((Message) message).receiptHandle()))))
+                .thenMany(reactiveCacheManager.evictCache());
     }
 
     @Override
