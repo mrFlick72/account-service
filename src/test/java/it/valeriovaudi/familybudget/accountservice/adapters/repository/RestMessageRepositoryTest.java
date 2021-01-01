@@ -3,7 +3,6 @@ package it.valeriovaudi.familybudget.accountservice.adapters.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import it.valeriovaudi.familybudget.accountservice.adapters.cache.ReactiveCacheManager;
 import org.junit.jupiter.api.AfterEach;
@@ -11,17 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
+import wiremock.com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.Duration;
-import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static it.valeriovaudi.familybudget.accountservice.TestingFixture.i18nsMessage;
 import static it.valeriovaudi.familybudget.accountservice.TestingFixture.newReactiveRedisTemplate;
-import static org.junit.jupiter.api.Assertions.*;
 
 class RestMessageRepositoryTest {
 
@@ -54,7 +50,6 @@ class RestMessageRepositoryTest {
         StubMapping stubMapping = stubFor(
                 get(urlPathEqualTo("/messages/account-service"))
                         .willReturn(aResponse()
-                                .withHeader("Content-Type", "application/json")
                                 .withBody(objectMapper.writeValueAsString(i18nsMessage())))
         );
         wireMockServer.addStubMapping(stubMapping);
@@ -67,6 +62,7 @@ class RestMessageRepositoryTest {
     @Test
     void whenCacheIsFull() {
         // fill cache
+        cacheManager.updateCache(i18nsMessage()).block();
         StepVerifier.create(cacheManager.updateCache(i18nsMessage()))
                 .expectNext(i18nsMessage())
                 .verifyComplete();
