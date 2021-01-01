@@ -1,5 +1,6 @@
 package it.valeriovaudi.familybudget.accountservice.adapters.cache;
 
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
 public class ReceiveMessageRequestFactory {
@@ -19,11 +20,18 @@ public class ReceiveMessageRequestFactory {
         this.waitTimeSeconds = waitTimeSeconds;
     }
 
-    public ReceiveMessageRequest makeARequest() {
+    public ReceiveMessageRequest makeAReceiveMessageRequest() {
         return ReceiveMessageRequest.builder()
                 .maxNumberOfMessages(maxNumberOfMessages)
                 .visibilityTimeout(visibilityTimeout)
                 .waitTimeSeconds(waitTimeSeconds)
+                .queueUrl(queueUrl)
+                .build();
+    }
+
+    public DeleteMessageRequest makeADeleteMessageRequest(String receiptHandle) {
+        return DeleteMessageRequest.builder()
+                .receiptHandle(receiptHandle)
                 .queueUrl(queueUrl)
                 .build();
     }

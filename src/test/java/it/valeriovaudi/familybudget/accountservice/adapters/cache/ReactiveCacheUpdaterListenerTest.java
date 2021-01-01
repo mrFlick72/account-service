@@ -35,7 +35,7 @@ class ReactiveCacheUpdaterListenerTest {
                 new ReactiveCacheUpdaterListener(Duration.ofSeconds(2), Flux.just(1, 1),
                         factory, reactiveCacheManager, sqsAsyncClient);
 
-        ReceiveMessageRequest request = factory.makeARequest();
+        ReceiveMessageRequest request = factory.makeAReceiveMessageRequest();
         ReceiveMessageResponse sqsResponse = ReceiveMessageResponse.builder().build();
 
         given(sqsAsyncClient.receiveMessage(request))
