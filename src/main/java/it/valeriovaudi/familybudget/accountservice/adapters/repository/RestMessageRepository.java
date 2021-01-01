@@ -28,8 +28,10 @@ public class RestMessageRepository implements MessageRepository {
 
     @Override
     public Publisher<Map<String, String>> messages() {
-        return cacheManager.getFromCache()
-                .switchIfEmpty(loader())
+        System.out.println("applicationId: " + applicationId);
+        System.out.println("/messages/" + applicationId);
+        return cacheManager.getFromCache().log()
+                .switchIfEmpty(loader()).log()
                 .flatMap(o -> cacheManager.updateCache((Map<String, String>) o));
     }
 
