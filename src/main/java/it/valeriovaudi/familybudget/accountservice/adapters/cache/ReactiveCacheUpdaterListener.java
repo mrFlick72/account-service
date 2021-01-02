@@ -35,11 +35,11 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
     public Flux listen() {
         return whileLoopFluxProvider
                 .delayElements(sleepingTime)
-                .flatMap(req -> fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())))
-                .log()
-                .flatMap(response -> Flux.fromIterable(((ReceiveMessageResponse) response).messages()))
-                .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(((Message) message).receiptHandle()))))
-                .thenMany(reactiveCacheManager.evictCache());
+                .flatMap(req -> fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())).log())
+                .flatMap(response -> Flux.fromIterable(((ReceiveMessageResponse) response).messages()).log())
+                .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(((Message) message).receiptHandle()))).log())
+                .flatMap(signal -> reactiveCacheManager.evictCache().log())
+                .log();
     }
 
     @Override
