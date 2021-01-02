@@ -56,6 +56,6 @@ class ReactiveCacheUpdaterListenerTest {
                 .expectComplete()
                 .verify();
 
-        verify(reactiveCacheManager, times(1)).evictCache();
+        verify(reactiveCacheManager, times(2)).evictCache();
     }
 }
