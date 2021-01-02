@@ -87,10 +87,10 @@ public class RepositoryConfig {
     @Bean
     public SqsAsyncClient sqsAsyncClient(@Value("${aws.region}") String awsRegion,
                                          AwsCredentialsProvider awsCredentialsProvider) {
-        return SqsAsyncClient.builder().
-                credentialsProvider(awsCredentialsProvider).
-                region(Region.of(awsRegion)).
-                build();
+        return SqsAsyncClient.builder()
+                .credentialsProvider(awsCredentialsProvider)
+                .region(Region.of(awsRegion))
+                .build();
     }
 
     @Bean

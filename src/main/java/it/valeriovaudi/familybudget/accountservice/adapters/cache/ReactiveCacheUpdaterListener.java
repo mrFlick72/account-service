@@ -1,17 +1,25 @@
 package it.valeriovaudi.familybudget.accountservice.adapters.cache;
 
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.Slf4JLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-import software.amazon.awssdk.services.sqs.model.Message;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 
 import java.time.Duration;
+import java.util.List;
 
 import static reactor.core.publisher.Mono.fromCompletionStage;
 
 public class ReactiveCacheUpdaterListener implements ApplicationRunner {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReactiveCacheUpdaterListener.class);
 
     private final ReceiveMessageRequestFactory factory;
     private final Duration sleepingTime;
@@ -35,11 +43,20 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
     public Flux listen() {
         return whileLoopFluxProvider
                 .delayElements(sleepingTime)
-                .flatMap(req -> fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())).log())
-                .flatMap(response -> Flux.fromIterable(((ReceiveMessageResponse) response).messages()).log())
-                .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(((Message) message).receiptHandle()))).log())
-                .flatMap(signal -> reactiveCacheManager.evictCache().log())
-                .log();
+                .log()
+                .flatMap(req -> handleMessage())
+                .flatMap(signal -> reactiveCacheManager.evictCache())
+                .doOnComplete(() -> logger.info("subscription completed"))
+                .doOnCancel(() -> logger.info("subscription cancelled"))
+                .doOnSubscribe((s) -> logger.info("subscription started"))
+                .doOnError(Exception.class, (e) -> logger.error("subscription error: ", e));
+    }
+
+    private Mono<List<DeleteMessageResponse>> handleMessage() {
+        return Flux.from(fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())))
+                .flatMap(response -> Flux.fromIterable(response.messages()))
+                .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(message.receiptHandle()))))
+                .collectList();
     }
 
     @Override
