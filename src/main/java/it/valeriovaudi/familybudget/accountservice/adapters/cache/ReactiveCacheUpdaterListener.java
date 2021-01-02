@@ -38,7 +38,7 @@ public class ReactiveCacheUpdaterListener implements ApplicationRunner {
                 .flatMap(req -> fromCompletionStage(sqsAsyncClient.receiveMessage(factory.makeAReceiveMessageRequest())).log())
                 .flatMap(response -> Flux.fromIterable(((ReceiveMessageResponse) response).messages()).log())
                 .flatMap(message -> fromCompletionStage(sqsAsyncClient.deleteMessage(factory.makeADeleteMessageRequest(((Message) message).receiptHandle()))).log())
-                .flatMap(signal -> reactiveCacheManager.evictCache().log())
+                .thenMany(reactiveCacheManager.evictCache().log())
                 .log();
     }
 
