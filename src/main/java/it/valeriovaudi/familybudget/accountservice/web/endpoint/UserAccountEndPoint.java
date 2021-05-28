@@ -40,7 +40,7 @@ public class UserAccountEndPoint {
         return RouterFunctions.route()
                 .GET(ENDPOINT_PREFIX ,
                         serverRequest -> serverRequest.principal()
-                                .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
+                                .map(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .flatMap(username -> Mono.from(accountRepository.findByMail(username)))
                                 .map(accountAdapter::domainToRepresentationModel)
                                 .flatMap(accountRepresentation -> ServerResponse.ok().body(BodyInserters.fromValue(accountRepresentation)))
@@ -48,7 +48,7 @@ public class UserAccountEndPoint {
 
                 .PUT(ENDPOINT_PREFIX,
                         serverRequest -> serverRequest.principal()
-                                .flatMap(vAuthenticatorUserNameResolver::getUserNameFor)
+                                .map(vAuthenticatorUserNameResolver::getUserNameFor)
                                 .zipWith(serverRequest.bodyToMono(AccountRepresentation.class))
                                 .map(setMailFrom())
                                 .flatMap(accountAdapter::representationModelToDomainModel)

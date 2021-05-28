@@ -5,7 +5,9 @@ import it.valeriovaudi.familybudget.accountservice.domain.UpdateAccount;
 import it.valeriovaudi.familybudget.accountservice.domain.model.Account;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
@@ -16,7 +18,7 @@ import reactor.core.publisher.Mono;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.*;
 
-//@WebFluxTest(value = {UserAccountEndPoint.class, AdapterTestConfig.class})
+@WebFluxTest(value = {UserAccountEndPoint.class, AdapterTestConfig.class})
 class UserAccountEndPointTest {
     private final static String ENDPOINT_PREFIX = "/user-account";
 
@@ -39,7 +41,7 @@ class UserAccountEndPointTest {
                 .build();
     }
 
-//    @Test
+    @Test
     void whenGetAUserAccountDetails() {
         given(accountRepository.findByMail("user.mail@mail.com"))
                 .willReturn(Mono.just(TestingFixture.anAccount()));
@@ -50,7 +52,7 @@ class UserAccountEndPointTest {
                 .expectBody().json(TestingFixture.anAccountAsJsonString());
     }
 
-//    @Test
+    @Test
     void whenUpdateAUserAccountDetails() {
         Account account = TestingFixture.anAccount();
 
