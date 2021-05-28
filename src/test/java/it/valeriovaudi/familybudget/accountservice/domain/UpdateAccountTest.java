@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -25,9 +24,6 @@ class UpdateAccountTest {
     @Mock
     AccountRepository accountRepository;
 
-    @Mock
-    RabbitTemplate template;
-
     @Test
     void execute() throws JsonProcessingException {
         var account = new Account("Valerio",
@@ -38,7 +34,7 @@ class UpdateAccountTest {
                 Locale.ENGLISH
         );
         ObjectMapper objectMapper = new ObjectMapper();
-        var accountUpdate = new UpdateAccount(accountRepository, template, objectMapper);
+        var accountUpdate = new UpdateAccount(accountRepository, objectMapper);
         var payload = objectMapper.writeValueAsString(
                 Map.of("email", "valerio.vaudi123@test.com",
                         "firstName", "Valerio",
@@ -57,8 +53,5 @@ class UpdateAccountTest {
 
         verify(accountRepository, times(1))
                 .update(account);
-
-        verify(template, times(1))
-                .convertAndSend("account-sync", "account-sync", payload);
     }
 }

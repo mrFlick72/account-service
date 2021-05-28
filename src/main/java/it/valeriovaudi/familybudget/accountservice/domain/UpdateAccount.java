@@ -7,7 +7,6 @@ import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepo
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -16,13 +15,14 @@ public class UpdateAccount {
     private final static Logger LOGGER = LoggerFactory.getLogger(UpdateAccount.class);
 
     private final AccountRepository accountRepository;
-    private final RabbitTemplate template;
+//    private final RabbitTemplate template;
     private final ObjectMapper objectMapper;
 
     public UpdateAccount(AccountRepository accountRepository,
-                         RabbitTemplate template, ObjectMapper objectMapper) {
+//                         RabbitTemplate template,
+                         ObjectMapper objectMapper) {
         this.accountRepository = accountRepository;
-        this.template = template;
+//        this.template = template;
         this.objectMapper = objectMapper;
     }
 
@@ -32,7 +32,7 @@ public class UpdateAccount {
                 .then(Mono.fromRunnable(() -> {
                             LOGGER.info("fire account update event");
                             String payload = payloadFor(account);
-                            template.convertAndSend("account-sync", "account-sync", payload);
+//                            template.convertAndSend("account-sync", "account-sync", payload);
                             LOGGER.info("account update event fired");
                         }
                 ));
