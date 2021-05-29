@@ -37,7 +37,7 @@ class UserAccountEndPointTest {
     public void setUp() {
         webTestClient = WebTestClient.bindToApplicationContext(context)
                 .apply(springSecurity())
-                .apply(mockOidcLogin().userInfoToken(builder -> builder.email(TestingFixture.ACCOUNT_MAIL)))
+                .apply(mockJwt().jwt(builder -> builder.subject(TestingFixture.ACCOUNT_MAIL)))
                 .build();
     }
 
