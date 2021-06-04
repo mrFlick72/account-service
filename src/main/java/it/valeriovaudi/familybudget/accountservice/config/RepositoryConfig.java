@@ -4,23 +4,18 @@ import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import it.valeriovaudi.familybudget.accountservice.adapters.repository.R2dbcAccountRepository;
-import it.valeriovaudi.familybudget.accountservice.adapters.repository.RestMessageRepository;
 import it.valeriovaudi.familybudget.accountservice.domain.repository.AccountRepository;
-import it.valeriovaudi.familybudget.accountservice.domain.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.web.reactive.function.client.WebClient;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-
-import java.util.Optional;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 
@@ -65,12 +60,4 @@ public class RepositoryConfig {
                 .build();
     }
 
-    @Bean
-    public MessageRepository messageRepository(Optional<WebClient.Builder> optional,
-                                               @Value("${i18n-messages.base-url:http://i18n-messages}") String i18nBaseUrl,
-                                               @Value("${spring.application.name}") String applicationId) {
-        WebClient.Builder builder = optional.orElse(WebClient.builder());
-        WebClient template = builder.build();
-        return new RestMessageRepository(i18nBaseUrl, applicationId, template);
-    }
 }
