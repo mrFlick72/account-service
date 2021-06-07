@@ -22,7 +22,7 @@ func (receiver *DynamoAccountRepository) Find(mail model.Mail) (*model.Account, 
 	getItemRequest := &dynamodb.GetItemInput{
 		TableName: aws.String(receiver.TableName),
 		Key: map[string]*dynamodb.AttributeValue{
-			"mail": {
+			"Mail": {
 				S: aws.String(mail),
 			},
 		},

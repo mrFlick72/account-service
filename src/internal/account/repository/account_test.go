@@ -16,7 +16,7 @@ func TestDynamoAccountRepository_Save(t *testing.T) {
 
 	repository := DynamoAccountRepository{
 		Client:    svc,
-		TableName: "",
+		TableName: "TESTING_Account_Service",
 	}
 	date, _ := model.DateFrom("01/01/1970")
 	err := repository.Save(&model.Account{
