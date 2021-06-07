@@ -8,7 +8,7 @@ type Phone struct {
 	PhoneNumber   string `json:"phoneNumber"`
 }
 
-func phoneFor(phoneNumber string) *Phone {
+func PhoneFor(phoneNumber string) *Phone {
 	phone := nullPhoneValue()
 
 	split := strings.Split(phoneNumber, " ")
