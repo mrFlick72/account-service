@@ -27,8 +27,8 @@ func (receiver *DynamoAccountRepository) Find(mail model.Mail) (*model.Account, 
 			},
 		},
 	}
-	resposne, err := receiver.Client.GetItem(getItemRequest)
-	item := resposne.Item
+	response, err := receiver.Client.GetItem(getItemRequest)
+	item := response.Item
 	date, _ := model.DateFrom(*item["BirthDate"].S)
 	return &model.Account{
 		FirstName: *item["FirstName"].S,
