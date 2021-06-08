@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/mrflick72/account-service/src/model"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -18,24 +19,25 @@ func TestDynamoAccountRepository_Save(t *testing.T) {
 		Client:    svc,
 		TableName: "TESTING_Account_Service",
 	}
-	date, _ := model.DateFrom("01/01/1970")
-	err := repository.Save(&model.Account{
+	date, _ := model.DateFrom("05/05/1985")
+	expected := &model.Account{
 		FirstName: "A_NAME",
 		LastName:  "A_LAST_NAME",
 		BirthDate: date,
 		Mail:      "mail@mail.com",
-		Phone:     model.PhoneFor("3331122333"),
+		Phone:     model.PhoneFor("+1 333 1122333"),
 		Locale:    "it",
-	})
+	}
+	err := repository.Save(expected)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	account, err := repository.Find("mail@mail.com")
+	actual, err := repository.Find("mail@mail.com")
 	if err != nil {
 		t.Error(err)
 	}
 
-	print(account)
+	assert.EqualValues(t, actual, expected)
 }

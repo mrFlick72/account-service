@@ -41,7 +41,16 @@ func (receiver *DynamoAccountRepository) Find(mail model.Mail) (*model.Account, 
 }
 
 func (receiver *DynamoAccountRepository) Save(account *model.Account) error {
-	accountAttributes, err := dynamodbattribute.MarshalMap(account)
+	accountAttributeMap := map[string]string{
+		"FirstName": account.FirstName,
+		"LastName":  account.LastName,
+		"BirthDate": account.BirthDate.FormattedDate(),
+		"Mail":      account.Mail,
+		"Phone":     account.Phone.FormattedPhone(),
+		"Locale":    account.Locale,
+	}
+
+	accountAttributes, err := dynamodbattribute.MarshalMap(accountAttributeMap)
 	if err != nil {
 		log.Fatalf("Got error marshalling new movie item: %s", err)
 	}

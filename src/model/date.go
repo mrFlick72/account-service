@@ -8,7 +8,7 @@ type Date struct {
 	Day time.Time
 }
 
-func (d *Date) formattedDate() string {
+func (d *Date) FormattedDate() string {
 	return d.Day.Format(DEFAULT_DATE_TIME_FORMATTER)
 }
 

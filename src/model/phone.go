@@ -1,11 +1,18 @@
 package model
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Phone struct {
 	CountryPrefix string `json:"countryPrefix"`
 	Prefix        string `json:"prefix"`
 	PhoneNumber   string `json:"phoneNumber"`
+}
+
+func (p *Phone) FormattedPhone() string {
+	return strings.Trim(fmt.Sprintf("%s %s %s", p.CountryPrefix, p.Prefix, p.PhoneNumber), "")
 }
 
 func PhoneFor(phoneNumber string) *Phone {
@@ -27,6 +34,7 @@ func PhoneFor(phoneNumber string) *Phone {
 	}
 	return phone
 }
+
 func nullPhoneValue() *Phone {
 	return &Phone{
 		CountryPrefix: "",
