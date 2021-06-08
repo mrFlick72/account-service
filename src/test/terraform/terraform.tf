@@ -11,5 +11,6 @@ provider "aws" {
   region = "us-east-1"
   endpoints {
     dynamodb = "http://localhost:8000"
+    sqs = "http://localhost:4566"
   }
 }
