@@ -1,4 +1,4 @@
-package repository
+package usecase
 
 import (
 	"github.com/mrflick72/account-service/src/internal/messaging"
