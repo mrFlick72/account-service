@@ -2,10 +2,11 @@ package api
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/mrflick72/account-service/src/internal/tracing"
+	"github.com/mrflick72/account-service/src/model/repository"
 )
 
 type AccountEndpoints struct {
+	AccountRepository repository.AccountRepository
 }
 
 func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application) {
@@ -15,7 +16,9 @@ func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application
 
 func (endpoint *AccountEndpoints) getAccountEndpoint(ctx iris.Context) {
 	//context := tracingContextFrom(ctx)
-
+	mail := ctx.Params().Get("mail")
+	account, _ := endpoint.AccountRepository.Find(mail)
+	ctx.JSON(account)
 	ctx.StatusCode(iris.StatusOK)
 	return
 }
@@ -25,8 +28,4 @@ func (endpoint *AccountEndpoints) updateAccountsEndpoint(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	return
-}
-
-func tracingContextFrom(ctx iris.Context) map[string]string {
-	return tracing.GetTracingHeadersFrom(ctx)
 }
