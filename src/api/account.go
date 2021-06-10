@@ -16,7 +16,7 @@ func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application
 
 func (endpoint *AccountEndpoints) getAccountEndpoint(ctx iris.Context) {
 	//context := tracingContextFrom(ctx)
-	mail := ctx.Params().Get("mail")
+	mail := ctx.URLParam("mail")
 	account, _ := endpoint.AccountRepository.Find(mail)
 	ctx.JSON(account)
 	ctx.StatusCode(iris.StatusOK)
