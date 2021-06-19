@@ -39,6 +39,17 @@ func (receiver *Jwk) RsaPublicKey() ([]*rsa.PublicKey, error) {
 	return extractKeys(get.Body)
 }
 
+func (receiver *Jwk) JwkSets() (jwk.Set, error) {
+	get, err := receiver.client.Get(&web.Request{
+		Url:    receiver.url,
+		Header: nil,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return jwk.ParseString(get.Body)
+}
+
 func extractKeys(jwkPayload string) ([]*rsa.PublicKey, error) {
 	set, err := jwk.Parse([]byte(jwkPayload))
 
@@ -64,5 +75,6 @@ func extractKeys(jwkPayload string) ([]*rsa.PublicKey, error) {
 		// As this is a demo just dump the key to the console
 		keys = append(keys, publicKey)
 	}
+
 	return keys, nil
 }

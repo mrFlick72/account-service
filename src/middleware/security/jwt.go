@@ -2,51 +2,35 @@ package security
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/sessions"
+	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/jwt"
 	"time"
 )
 
-func SetUpOAuth2(app *iris.Application) {
-	//oauth2Config, verifier := oauth2Configurer()
-	//var middleware = NewOAuth2Middleware(oauth2Config)
-	//app.Use(middleware)
+func SetUpOAuth2(app *iris.Application, jwk Jwk) {
+	sets, _ := jwk.JwkSets()
+	var middleware = NewOAuth2Middleware(sets)
+	app.Use(middleware)
 }
 
-/*
-func oauth2Configurer() (*oauth2.Config, *oidc.IDTokenVerifier) {
-	configURL := os.Getenv("OIDC_IDP_URL")
-	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, configURL)
-	if err != nil {
-		panic(err)
-	}
-
-	clientID := os.Getenv("OIDC_CLIENT_ID")
-	clientSecret := os.Getenv("OIDC_CLIENT_SECRET")
-	redirectURL := os.Getenv("OIDC_REDIRECT_URL")
-
-	// Configure an OpenID Connect aware OAuth2 client.
-	oauth2Config := &oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURL:  redirectURL,
-		// Discovery returns the OAuth2 endpoints.
-		Endpoint: provider.Endpoint(),
-		// "openid" is a required scope for OpenID Connect flows.
-		Scopes: []string{oidc.ScopeOpenID, "profile", "email"},
-	}
-	oidcConfig := &oidc.Config{
-		ClientID: clientID,
-	}
-	verifier := provider.Verifier(oidcConfig)
-
-	return oauth2Config, verifier
-}*/
-
-func NewOAuth2Middleware() func(ctx iris.Context) {
+func NewOAuth2Middleware(keySet jwk.Set) func(ctx iris.Context) {
 	return func(ctx iris.Context) {
-		// put here the base midelware logic
+		authorization := authorizationHeaderFor(ctx)
+
+		jwt, _ := jwt.ParseString(authorization, jwt.WithKeySet(keySet))
+		//ctx.Request().Context().Value("")
+		if time.Now().After(jwt.Expiration()) {
+			ctx.StatusCode(401)
+			return
+		}
+
 	}
+}
+
+func authorizationHeaderFor(ctx iris.Context) string {
+	authorization := ctx.GetHeader("Authorization")
+	authorization = authorization[7 : len(authorization)-1]
+	return authorization
 }
 
 type OAuth2User struct {
@@ -55,13 +39,4 @@ type OAuth2User struct {
 	IdToken     string
 	Expire      time.Time
 	Authorities []string
-}
-
-func (user *OAuth2User) IsExpired() bool {
-	return time.Now().After(user.Expire)
-}
-
-func GetUserFromSession(context iris.Context) OAuth2User {
-	session := sessions.Get(context)
-	return session.Get("oauth2User").(OAuth2User)
 }
