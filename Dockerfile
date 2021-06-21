@@ -1,7 +1,12 @@
-FROM openjdk:11
+FROM golang:1.16.5
 
-ADD target/account-service.jar /usr/local/account-service/
+VOLUME /var/log/onlyone-portal/logs
+WORKDIR /go/src/app
 
-WORKDIR /usr/local/account-service/
+COPY . .
 
-CMD ["java", "-jar", "account-service.jar"]
+RUN go get -d -v ./...  && \
+    go install -v ./... && \
+    go build -o app
+
+CMD ["./app"]
