@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/kataras/iris/v12"
@@ -25,7 +26,7 @@ func NewApplicationServer(wg *sync.WaitGroup) {
 	app := newWebServer()
 
 	ConfigureAccountEndpoints(ConfigureAccountRepository(), app)
-	app.Listen(manager.GetConfigFor("server.port"))
+	app.Listen(fmt.Sprint("0.0.0.0:%v", manager.GetConfigFor("server.port")))
 	wg.Done()
 }
 
