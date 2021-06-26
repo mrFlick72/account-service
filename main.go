@@ -8,9 +8,14 @@ import (
 
 func main() {
 	initConfigurationManager()
+	initApplicationServer()
+}
+
+func initApplicationServer() {
 	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	wg.Add(2)
 	go application.NewApplicationServer(wg)
+	go application.NewActuatorServer(wg)
 	wg.Wait()
 }
 
