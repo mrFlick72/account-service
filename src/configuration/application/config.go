@@ -1,0 +1,51 @@
+package application
+
+import (
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/kataras/iris/v12"
+	"github.com/mrflick72/account-service/src/api"
+	"github.com/mrflick72/account-service/src/internal/messaging"
+	"github.com/mrflick72/account-service/src/model/repository"
+	"github.com/mrflick72/account-service/src/model/usecase"
+)
+
+func ConfigureAccountRepository() repository.AccountRepository {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+	svc := dynamodb.New(sess)
+
+	return &repository.DynamoAccountRepository{
+		Client:    svc,
+		TableName: manager.GetConfigFor("datasource.table-name"),
+	}
+}
+
+func ConfigureAccountUpdater(repository repository.AccountRepository) *usecase.UpdateAccount {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+	svc := sqs.New(sess)
+
+	sender := messaging.SqsEventSender{
+		Client:   svc,
+		QueueURL: manager.GetConfigFor("account.event.updates.sqs-queue-url"),
+	}
+
+	return &usecase.UpdateAccount{
+		Repository:  repository,
+		EventSender: &sender,
+	}
+}
+
+func ConfigureAccountEndpoints(repository repository.AccountRepository,
+	accountUpdate *usecase.UpdateAccount,
+	app *iris.Application) {
+	endpoints := api.AccountEndpoints{
+		AccountRepository: repository,
+		AccountUpdate:     accountUpdate,
+	}
+	endpoints.RegisterEndpoint(app)
+}
