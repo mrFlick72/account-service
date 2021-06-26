@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/mrflick72/account-service/src/configuration"
+	"github.com/mrflick72/account-service/src/middleware/security"
 	"github.com/mrflick72/account-service/src/model/repository"
 )
 
@@ -22,9 +23,9 @@ func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application
 
 func (endpoint *AccountEndpoints) getAccountEndpoint(ctx iris.Context) {
 	ctx.Application().Logger().Info(ctx.Request().Context())
-	mail := ctx.Request().Context().Value("userName").(string)
-	ctx.Application().Logger().Info(mail)
-	account, _ := endpoint.AccountRepository.Find(mail)
+	user := ctx.Request().Context().Value("user").(security.OAuth2User)
+	ctx.Application().Logger().Info(user)
+	account, _ := endpoint.AccountRepository.Find(user.UserName)
 	ctx.JSON(account)
 	ctx.StatusCode(iris.StatusOK)
 	return

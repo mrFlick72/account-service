@@ -31,8 +31,11 @@ func NewOAuth2Middleware(keySet jwk.Set, allowedAuthority string) func(ctx iris.
 			return
 		}
 
-		newContext := context.WithValue(ctx.Request().Context(), "userName", userName)
+		newContext := context.WithValue(ctx.Request().Context(), "user", OAuth2User{
+			UserName: userName,
+		})
 		ctx.Request().WithContext(newContext)
+		ctx.Next()
 	}
 }
 
