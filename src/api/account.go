@@ -1,21 +1,29 @@
 package api
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/mrflick72/account-service/src/configuration"
 	"github.com/mrflick72/account-service/src/model/repository"
 )
+
+var manager = configuration.GetConfigurationManagerInstance()
 
 type AccountEndpoints struct {
 	AccountRepository repository.AccountRepository
 }
 
 func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application) {
-	application.Get("/user-account", endpoint.getAccountEndpoint)
-	application.Put("/user-account", endpoint.updateAccountsEndpoint)
+	contextPath := manager.GetConfigFor("server.context-path")
+	endpointPath := fmt.Sprintf("%v%v", contextPath, "/user-account")
+	application.Get(endpointPath, endpoint.getAccountEndpoint)
+	application.Put(endpointPath, endpoint.updateAccountsEndpoint)
 }
 
 func (endpoint *AccountEndpoints) getAccountEndpoint(ctx iris.Context) {
-	mail := ctx.URLParam("mail")
+	ctx.Application().Logger().Info(ctx.Request().Context())
+	mail := ctx.Request().Context().Value("userName").(string)
+	ctx.Application().Logger().Info(mail)
 	account, _ := endpoint.AccountRepository.Find(mail)
 	ctx.JSON(account)
 	ctx.StatusCode(iris.StatusOK)

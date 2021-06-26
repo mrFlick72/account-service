@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-const DEFAULT_DATE_TIME_FORMATTER = "02/01/2006"
+const DEFAULT_DATE_TIME_FORMATTER = "2006-01-02"
 
 type Date struct {
 	Day time.Time

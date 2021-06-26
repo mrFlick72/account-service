@@ -18,23 +18,20 @@ func NewOAuth2Middleware(keySet jwk.Set, allowedAuthority string) func(ctx iris.
 	return func(ctx iris.Context) {
 		authorization := authorizationHeaderFor(ctx)
 
-		jwt, _ := jwt.ParseString(authorization, jwt.WithKeySet(keySet))
+		jwt, _ := jwt.ParseString(authorization)
 		if time.Now().After(jwt.Expiration()) {
 			ctx.StatusCode(401)
 			return
 		}
-		userName, _ := jwt.PrivateClaims()["email"].(string)
-		authorities, _ := jwt.PrivateClaims()["authorities"].([]string)
+		userName, _ := jwt.PrivateClaims()["user_name"].(string)
+		authorities, _ := jwt.PrivateClaims()["authorities"].([]interface{})
 
-		if ok := contains(authorities, allowedAuthority); !ok {
+		if ok := contains(*toStringSlice(authorities), allowedAuthority); !ok {
 			ctx.StatusCode(403)
 			return
 		}
 
-		newContext := context.WithValue(ctx.Request().Context(), "user", OAuth2User{
-			UserName:    userName,
-			Authorities: authorities,
-		})
+		newContext := context.WithValue(ctx.Request().Context(), "userName", userName)
 		ctx.Request().WithContext(newContext)
 	}
 }
@@ -48,10 +45,19 @@ func contains(slice []string, item string) bool {
 	_, ok := set[item]
 	return ok
 }
+func toStringSlice(slice []interface{}) *[]string {
+	result := make([]string, 0)
+
+	for _, item := range slice {
+		result = append(result, item.(string))
+	}
+
+	return &result
+}
 
 func authorizationHeaderFor(ctx iris.Context) string {
 	authorization := ctx.GetHeader("Authorization")
-	authorization = authorization[7 : len(authorization)-1]
+	authorization = authorization[7:len(authorization)]
 	return authorization
 }
 

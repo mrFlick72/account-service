@@ -17,8 +17,7 @@ type Jwk struct {
 
 func (receiver *Jwk) RsaPublicKey() ([]*rsa.PublicKey, error) {
 	get, err := receiver.Client.Get(&web.Request{
-		Url:    receiver.Url,
-		Header: nil,
+		Url: receiver.Url,
 	})
 	if err != nil {
 		return nil, err
@@ -28,8 +27,7 @@ func (receiver *Jwk) RsaPublicKey() ([]*rsa.PublicKey, error) {
 
 func (receiver *Jwk) JwkSets() (jwk.Set, error) {
 	get, err := receiver.Client.Get(&web.Request{
-		Url:    receiver.Url,
-		Header: nil,
+		Url: receiver.Url,
 	})
 	if err != nil {
 		return nil, err
