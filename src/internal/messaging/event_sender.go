@@ -11,8 +11,8 @@ type EventSender interface {
 }
 
 type SqsEventSender struct {
-	client   *sqs.SQS
-	queueURL string
+	Client   *sqs.SQS
+	QueueURL string
 }
 
 func (receiver *SqsEventSender) SendEvent(event interface{}) error {
@@ -20,9 +20,9 @@ func (receiver *SqsEventSender) SendEvent(event interface{}) error {
 	if err == nil {
 		input := sqs.SendMessageInput{
 			MessageBody: aws.String(string(body)),
-			QueueUrl:    &receiver.queueURL,
+			QueueUrl:    &receiver.QueueURL,
 		}
-		_, err = receiver.client.SendMessage(&input)
+		_, err = receiver.Client.SendMessage(&input)
 	}
 	return err
 }

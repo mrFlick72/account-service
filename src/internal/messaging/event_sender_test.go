@@ -20,8 +20,8 @@ func TestSqsEventSender_SendEvent(t *testing.T) {
 	client := sqs.New(sess, &aws.Config{Region: aws.String("us-east-1"), Endpoint: aws.String("http://localhost:4566")})
 	queueURL := "http://localhost:4566/000000000000/TESTING_Account_Service_Sync_queue"
 	sender := SqsEventSender{
-		client:   client,
-		queueURL: queueURL,
+		Client:   client,
+		QueueURL: queueURL,
 	}
 	date, _ := model.DateFrom("05/05/1985")
 	account := &model.Account{

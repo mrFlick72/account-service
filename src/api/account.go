@@ -9,12 +9,14 @@ import (
 	"github.com/mrflick72/account-service/src/middleware/security"
 	"github.com/mrflick72/account-service/src/model"
 	"github.com/mrflick72/account-service/src/model/repository"
+	"github.com/mrflick72/account-service/src/model/usecase"
 )
 
 var manager = configuration.GetConfigurationManagerInstance()
 
 type AccountEndpoints struct {
 	AccountRepository repository.AccountRepository
+	AccountUpdate     *usecase.UpdateAccount
 }
 
 func (endpoint *AccountEndpoints) RegisterEndpoint(application *iris.Application) {
@@ -38,7 +40,7 @@ func (endpoint *AccountEndpoints) updateAccountsEndpoint(ctx iris.Context) {
 
 	account := fromRepresentationToDomainFor(representation)
 	account.Mail = userNameFrom(ctx)
-	endpoint.AccountRepository.Save(account)
+	endpoint.AccountUpdate.Save(account)
 
 	ctx.StatusCode(iris.StatusNoContent)
 }

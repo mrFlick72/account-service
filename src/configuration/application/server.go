@@ -30,7 +30,9 @@ func NewApplicationServer(wg *sync.WaitGroup) {
 		Client: web.New(),
 	}, manager.GetConfigFor("security.allowed-authority"))
 
-	ConfigureAccountEndpoints(ConfigureAccountRepository(), app)
+	repository := ConfigureAccountRepository()
+	updater := ConfigureAccountUpdater(repository)
+	ConfigureAccountEndpoints(repository, updater, app)
 	app.Listen(fmt.Sprintf(":%v", manager.GetConfigFor("server.port")))
 	wg.Done()
 }
