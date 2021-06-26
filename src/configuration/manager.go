@@ -25,10 +25,10 @@ func GetConfigurationManagerInstance() *Manager {
 func (manager *Manager) Init(wg *sync.WaitGroup) {
 	manager.viper = viper.New()
 
-	viper.SetConfigName(os.Getenv("CONFIGURATION_FILE_NAME"))
-	viper.SetConfigType(os.Getenv("CONFIGURATION_FILE_TYPE"))
+	manager.viper.SetConfigName(os.Getenv("CONFIGURATION_FILE_NAME"))
+	manager.viper.SetConfigType(os.Getenv("CONFIGURATION_FILE_TYPE"))
 	manager.viper.AddConfigPath(os.Getenv("CONFIGURATION_PATH"))
-	manager.viper.AutomaticEnv()
+	manager.viper.ReadInConfig()
 	wg.Done()
 }
 

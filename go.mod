@@ -8,13 +8,13 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
-	github.com/kataras/iris/v12 v12.1.8
+	github.com/kataras/iris/v12 v12.1.8 // indirect
 	github.com/lestrrat-go/jwx v1.2.1
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/spf13/viper v1.3.2
+	github.com/spf13/viper v1.8.1 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect

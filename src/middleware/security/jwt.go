@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-func SetUpOAuth2(app *iris.Application, jwk Jwk, uriAuthMapper map[string]string) {
+func SetUpOAuth2(app *iris.Application, jwk Jwk, role string) {
 	sets, _ := jwk.JwkSets()
-	var middleware = NewOAuth2Middleware(sets, uriAuthMapper)
+	var middleware = NewOAuth2Middleware(sets, role)
 	app.Use(middleware)
 }
 
-func NewOAuth2Middleware(keySet jwk.Set, mapper map[string]string) func(ctx iris.Context) {
+func NewOAuth2Middleware(keySet jwk.Set, allowedAuthority string) func(ctx iris.Context) {
 	return func(ctx iris.Context) {
 		authorization := authorizationHeaderFor(ctx)
 
@@ -26,7 +26,6 @@ func NewOAuth2Middleware(keySet jwk.Set, mapper map[string]string) func(ctx iris
 		userName, _ := jwt.PrivateClaims()["email"].(string)
 		authorities, _ := jwt.PrivateClaims()["authorities"].([]string)
 
-		allowedAuthority := mapper[ctx.Path()]
 		if ok := contains(authorities, allowedAuthority); !ok {
 			ctx.StatusCode(403)
 			return

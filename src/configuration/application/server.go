@@ -9,6 +9,8 @@ import (
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/mrflick72/account-service/src/api"
 	"github.com/mrflick72/account-service/src/configuration"
+	"github.com/mrflick72/account-service/src/internal/web"
+	"github.com/mrflick72/account-service/src/middleware/security"
 	"github.com/mrflick72/account-service/src/model/repository"
 	"sync"
 )
@@ -19,6 +21,12 @@ func newWebServer() *iris.Application {
 	app := iris.New()
 	app.Use(recover.New())
 	app.Use(logger.New())
+
+	security.SetUpOAuth2(app, security.Jwk{
+		Url:    manager.GetConfigFor("security.jwk-uri"),
+		Client: web.New(),
+	}, manager.GetConfigFor("security.allowed-authority"))
+
 	return app
 }
 
@@ -26,7 +34,9 @@ func NewApplicationServer(wg *sync.WaitGroup) {
 	app := newWebServer()
 
 	ConfigureAccountEndpoints(ConfigureAccountRepository(), app)
-	app.Listen(fmt.Sprint("0.0.0.0:%v", manager.GetConfigFor("server.port")))
+	configFor := manager.GetConfigFor("server.port")
+	fmt.Printf("port %v", configFor)
+	app.Listen(fmt.Sprintf("0.0.0.0:%v", configFor))
 	wg.Done()
 }
 

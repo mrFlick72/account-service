@@ -24,8 +24,8 @@ func TestJwk_RsaPublicKey(t *testing.T) {
 	}
 	`
 	jwk := Jwk{
-		url:    "http://localhost/jwk",
-		client: client,
+		Url:    "http://localhost/jwk",
+		Client: client,
 	}
 
 	client.On("Get", &web.Request{
@@ -57,8 +57,8 @@ func TestJwk_JwkSets(t *testing.T) {
 	}
 	`
 	jwk := Jwk{
-		url:    "http://localhost/jwk",
-		client: client,
+		Url:    "http://localhost/jwk",
+		Client: client,
 	}
 
 	client.On("Get", &web.Request{

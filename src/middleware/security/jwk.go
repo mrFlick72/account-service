@@ -10,27 +10,14 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 )
 
-/*
-type JwkDelegate interface {
-	RsaPublicKey() (*rsa.PublicKey, error)
-}
-
-type JwkWebDelegate struct {
-	client *web.RestWebClient
-}
-func (receiver *Jwk) RsaPublicKey() (*rsa.PublicKey, error) {
-	return receiver.delegate.RsaPublicKey()
-}
-*/
-
 type Jwk struct {
-	url    string
-	client web.Client
+	Url    string
+	Client web.Client
 }
 
 func (receiver *Jwk) RsaPublicKey() ([]*rsa.PublicKey, error) {
-	get, err := receiver.client.Get(&web.Request{
-		Url:    receiver.url,
+	get, err := receiver.Client.Get(&web.Request{
+		Url:    receiver.Url,
 		Header: nil,
 	})
 	if err != nil {
@@ -40,8 +27,8 @@ func (receiver *Jwk) RsaPublicKey() ([]*rsa.PublicKey, error) {
 }
 
 func (receiver *Jwk) JwkSets() (jwk.Set, error) {
-	get, err := receiver.client.Get(&web.Request{
-		Url:    receiver.url,
+	get, err := receiver.Client.Get(&web.Request{
+		Url:    receiver.Url,
 		Header: nil,
 	})
 	if err != nil {
