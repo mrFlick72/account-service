@@ -11,7 +11,7 @@ import (
 	"github.com/mrflick72/account-service/src/model/usecase"
 )
 
-func ConfigureAccountRepository() *repository.DynamoAccountRepository {
+func ConfigureAccountRepository() repository.AccountRepository {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
