@@ -9,6 +9,8 @@ import (
 	"log"
 )
 
+var databaseDatePattern = stringsUtils.AsPointer(model.DEFAULT_DATE_TIME_FORMATTER)
+
 type AccountRepository interface {
 	Find(mail model.Mail) (*model.Account, error)
 	Save(account *model.Account) error
@@ -30,7 +32,7 @@ func (receiver *DynamoAccountRepository) Find(mail model.Mail) (*model.Account, 
 	}
 	response, err := receiver.Client.GetItem(getItemRequest)
 	item := response.Item
-	date, _ := model.DateFrom(*item["BirthDate"].S)
+	date, _ := model.DateFrom(*item["BirthDate"].S, databaseDatePattern)
 	return &model.Account{
 		FirstName: *item["FirstName"].S,
 		LastName:  *item["LastName"].S,
@@ -45,7 +47,7 @@ func (receiver *DynamoAccountRepository) Save(account *model.Account) error {
 	accountAttributeMap := map[string]string{
 		"FirstName": account.FirstName,
 		"LastName":  account.LastName,
-		"BirthDate": account.BirthDate.FormattedDate(stringsUtils.AsPointer(model.DEFAULT_DATE_TIME_FORMATTER)),
+		"BirthDate": account.BirthDate.FormattedDate(databaseDatePattern),
 		"Mail":      account.Mail,
 		"Phone":     account.Phone.FormattedPhone(),
 		"Locale":    account.Locale,

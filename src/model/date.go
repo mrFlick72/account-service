@@ -10,14 +10,18 @@ type Date struct {
 }
 
 func (d *Date) FormattedDate(pattern *string) string {
+	return d.Day.Format(patternOrDefault(pattern))
+}
+
+func DateFrom(date string, pattern *string) (*Date, error) {
+	parse, err := time.Parse(patternOrDefault(pattern), date)
+	return &Date{Day: parse}, err
+}
+
+func patternOrDefault(pattern *string) string {
 	actualPattern := DEFAULT_DATE_TIME_FORMATTER
 	if pattern != nil {
 		actualPattern = *pattern
 	}
-	return d.Day.Format(actualPattern)
-}
-
-func DateFrom(date string) (*Date, error) {
-	parse, err := time.Parse(DEFAULT_DATE_TIME_FORMATTER, date)
-	return &Date{Day: parse}, err
+	return actualPattern
 }
