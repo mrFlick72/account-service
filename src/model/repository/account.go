@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	stringsUtils "github.com/mrflick72/account-service/src/internal/strings"
 	"github.com/mrflick72/account-service/src/model"
 	"log"
 )
@@ -44,7 +45,7 @@ func (receiver *DynamoAccountRepository) Save(account *model.Account) error {
 	accountAttributeMap := map[string]string{
 		"FirstName": account.FirstName,
 		"LastName":  account.LastName,
-		"BirthDate": account.BirthDate.FormattedDate(),
+		"BirthDate": account.BirthDate.FormattedDate(stringsUtils.AsPointer(model.DEFAULT_DATE_TIME_FORMATTER)),
 		"Mail":      account.Mail,
 		"Phone":     account.Phone.FormattedPhone(),
 		"Locale":    account.Locale,
