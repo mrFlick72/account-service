@@ -18,6 +18,7 @@ func NewOAuth2Middleware(keySet jwk.Set, allowedAuthority string) func(ctx iris.
 	return func(ctx iris.Context) {
 		authorization := authorizationHeaderFor(ctx)
 
+		//jwt, _ := jwt.ParseString(authorization, jwt.WithKeySet(keySet))
 		jwt, _ := jwt.ParseString(authorization)
 		if time.Now().After(jwt.Expiration()) {
 			ctx.StatusCode(401)
@@ -34,7 +35,7 @@ func NewOAuth2Middleware(keySet jwk.Set, allowedAuthority string) func(ctx iris.
 		newContext := context.WithValue(ctx.Request().Context(), "user", OAuth2User{
 			UserName: userName,
 		})
-		ctx.Request().WithContext(newContext)
+		ctx.ResetRequest(ctx.Request().WithContext(newContext))
 		ctx.Next()
 	}
 }

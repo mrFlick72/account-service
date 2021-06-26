@@ -28,12 +28,9 @@ func (endpoint *AccountEndpoints) getAccountEndpoint(ctx iris.Context) {
 	account, _ := endpoint.AccountRepository.Find(user.UserName)
 	ctx.JSON(account)
 	ctx.StatusCode(iris.StatusOK)
-	return
 }
 
 func (endpoint *AccountEndpoints) updateAccountsEndpoint(ctx iris.Context) {
-	//context := tracingContextFrom(ctx)
-
-	ctx.StatusCode(iris.StatusOK)
+	ctx.StatusCode(iris.StatusNoContent)
 	return
 }
