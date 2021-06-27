@@ -1,12 +1,12 @@
 package model
 
 type Account struct {
-	FirstName FirstName
-	LastName  LastName
+	FirstName FirstName `json:"firstName"`
+	LastName  LastName  `json:"lastName"`
 
 	BirthDate *Date
 
-	Mail   Mail
+	Mail   Mail `json:"mail"`
 	Phone  *Phone
 	Locale Locale
 }
