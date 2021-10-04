@@ -3,6 +3,8 @@ module github.com/mrflick72/account-service
 go 1.16
 
 require (
+	github.com/mrflick72/cloud-native-golang-framework v0.1.3
+
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/aws/aws-sdk-go v1.38.56
 	github.com/go-resty/resty/v2 v2.6.0
