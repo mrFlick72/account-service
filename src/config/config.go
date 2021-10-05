@@ -9,7 +9,9 @@ import (
 	"github.com/mrflick72/account-service/src/internal/messaging"
 	"github.com/mrflick72/account-service/src/model/repository"
 	"github.com/mrflick72/account-service/src/model/usecase"
+	"github.com/mrflick72/cloud-native-golang-framework"
 	"github.com/mrflick72/cloud-native-golang-framework/configuration"
+	"sync"
 )
 
 var manager = configuration.GetConfigurationManagerInstance()
@@ -51,4 +53,12 @@ func ConfigureAccountEndpoints(repository repository.AccountRepository,
 		AccountUpdate:     accountUpdate,
 	}
 	endpoints.RegisterEndpoint(app)
+}
+
+func NewApplicationServer(wg *sync.WaitGroup) {
+	app := application.NewApplicationServer()
+	repository := ConfigureAccountRepository()
+	updater := ConfigureAccountUpdater(repository)
+	ConfigureAccountEndpoints(repository, updater, app)
+	application.StartApplicationServer(wg, app)
 }
