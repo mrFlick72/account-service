@@ -6,6 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/mrflick72/account-service/src/model"
+	"github.com/mrflick72/cloud-native-golang-framework/date"
+	"github.com/mrflick72/cloud-native-golang-framework/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -23,7 +25,7 @@ func TestSqsEventSender_SendEvent(t *testing.T) {
 		Client:   client,
 		QueueURL: queueURL,
 	}
-	date, _ := model.DateFrom("05/05/1985")
+	date, _ := date.DateFrom("05/05/1985", utils.AsPointer(date.REPRESENTATION_DATE_TIME_FORMATTER))
 	account := &model.Account{
 		FirstName: "A_NAME",
 		LastName:  "A_LAST_NAME",

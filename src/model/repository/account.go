@@ -4,12 +4,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	stringsUtils "github.com/mrflick72/account-service/src/internal/strings"
 	"github.com/mrflick72/account-service/src/model"
+	"github.com/mrflick72/cloud-native-golang-framework/date"
+	"github.com/mrflick72/cloud-native-golang-framework/utils"
 	"log"
 )
 
-var databaseDatePattern = stringsUtils.AsPointer(model.DEFAULT_DATE_TIME_FORMATTER)
+var databaseDatePattern = utils.AsPointer(date.DEFAULT_DATE_TIME_FORMATTER)
 
 type AccountRepository interface {
 	Find(mail model.Mail) (*model.Account, error)
@@ -32,7 +33,7 @@ func (receiver *DynamoAccountRepository) Find(mail model.Mail) (*model.Account, 
 	}
 	response, err := receiver.Client.GetItem(getItemRequest)
 	item := response.Item
-	date, _ := model.DateFrom(*item["BirthDate"].S, databaseDatePattern)
+	date, _ := date.DateFrom(*item["BirthDate"].S, databaseDatePattern)
 	return &model.Account{
 		FirstName: *item["FirstName"].S,
 		LastName:  *item["LastName"].S,

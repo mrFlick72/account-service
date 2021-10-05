@@ -1,4 +1,4 @@
-package application
+package config
 
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -9,7 +9,10 @@ import (
 	"github.com/mrflick72/account-service/src/internal/messaging"
 	"github.com/mrflick72/account-service/src/model/repository"
 	"github.com/mrflick72/account-service/src/model/usecase"
+	"github.com/mrflick72/cloud-native-golang-framework/configuration"
 )
+
+var manager = configuration.GetConfigurationManagerInstance()
 
 func ConfigureAccountRepository() repository.AccountRepository {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
