@@ -1,4 +1,4 @@
-package application
+package config
 
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -6,10 +6,15 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/kataras/iris/v12"
 	"github.com/mrflick72/account-service/src/api"
-	"github.com/mrflick72/account-service/src/internal/messaging"
 	"github.com/mrflick72/account-service/src/model/repository"
 	"github.com/mrflick72/account-service/src/model/usecase"
+	"github.com/mrflick72/cloud-native-golang-framework"
+	"github.com/mrflick72/cloud-native-golang-framework/configuration"
+	awssqs "github.com/mrflick72/cloud-native-golang-framework/messaging/aws/sqs"
+	"sync"
 )
+
+var manager = configuration.GetConfigurationManagerInstance()
 
 func ConfigureAccountRepository() repository.AccountRepository {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -29,7 +34,7 @@ func ConfigureAccountUpdater(repository repository.AccountRepository) *usecase.U
 	}))
 	svc := sqs.New(sess)
 
-	sender := messaging.SqsEventSender{
+	sender := awssqs.SqsEventSender{
 		Client:   svc,
 		QueueURL: manager.GetConfigFor("account.event.updates.sqs-queue-url"),
 	}
@@ -48,4 +53,12 @@ func ConfigureAccountEndpoints(repository repository.AccountRepository,
 		AccountUpdate:     accountUpdate,
 	}
 	endpoints.RegisterEndpoint(app)
+}
+
+func NewApplicationServer(wg *sync.WaitGroup) {
+	app := application.NewApplicationServer()
+	repository := ConfigureAccountRepository()
+	updater := ConfigureAccountUpdater(repository)
+	ConfigureAccountEndpoints(repository, updater, app)
+	application.StartApplicationServer(wg, app)
 }

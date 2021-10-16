@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kataras/iris/v12"
-	"github.com/mrflick72/account-service/src/configuration"
-	stringsUtils "github.com/mrflick72/account-service/src/internal/strings"
-	"github.com/mrflick72/account-service/src/middleware/security"
 	"github.com/mrflick72/account-service/src/model"
 	"github.com/mrflick72/account-service/src/model/repository"
 	"github.com/mrflick72/account-service/src/model/usecase"
+	"github.com/mrflick72/cloud-native-golang-framework/configuration"
+	"github.com/mrflick72/cloud-native-golang-framework/date"
+	"github.com/mrflick72/cloud-native-golang-framework/middleware/security"
+	"github.com/mrflick72/cloud-native-golang-framework/utils"
 )
 
 var manager = configuration.GetConfigurationManagerInstance()
@@ -60,7 +61,7 @@ type AccountRepresentation struct {
 }
 
 func fromDomainToRepresentationFor(account *model.Account) AccountRepresentation {
-	pattern := stringsUtils.AsPointer(model.REPRESENTATION_DATE_TIME_FORMATTER)
+	pattern := utils.AsPointer(date.REPRESENTATION_DATE_TIME_FORMATTER)
 	return AccountRepresentation{
 		FirstName: account.FirstName,
 		LastName:  account.LastName,
@@ -71,7 +72,7 @@ func fromDomainToRepresentationFor(account *model.Account) AccountRepresentation
 }
 
 func fromRepresentationToDomainFor(account AccountRepresentation) *model.Account {
-	date, _ := model.DateFrom(account.BirthDate, stringsUtils.AsPointer(model.REPRESENTATION_DATE_TIME_FORMATTER))
+	date, _ := date.DateFrom(account.BirthDate, utils.AsPointer(date.REPRESENTATION_DATE_TIME_FORMATTER))
 	return &model.Account{
 		FirstName: account.FirstName,
 		LastName:  account.LastName,

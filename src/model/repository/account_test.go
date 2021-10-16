@@ -5,6 +5,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/mrflick72/account-service/src/model"
+	"github.com/mrflick72/cloud-native-golang-framework/date"
+	"github.com/mrflick72/cloud-native-golang-framework/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -19,7 +21,7 @@ func TestDynamoAccountRepository_Save(t *testing.T) {
 		Client:    svc,
 		TableName: "TESTING_Account_Service",
 	}
-	date, _ := model.DateFrom("05/05/1985")
+	date, _ := date.DateFrom("05/05/1985", utils.AsPointer(date.REPRESENTATION_DATE_TIME_FORMATTER))
 	expected := &model.Account{
 		FirstName: "A_NAME",
 		LastName:  "A_LAST_NAME",
